@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>PRODJECT CPR website</title>
+    <link rel="stylesheet" href="gamestyle.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar__container">
+            <a href="/test5/index.html" id="navbar__logo">PROJECT CPR</a>
+            <div class="navbar__toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="navbar__menu">
+                <li class="navbar__item">
+                    <a href="/test5/index.html" class="navbar__links">Home</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="/test5/game.html" class="navbar__links">Game</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="/test5/info.html" class="navbar__links">
+                        Stats
+                    </a>
+                </li>
+                <li class="navbar__btn">
+                    <a href="/test5/login.html" class="button">
+                        sign up
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!--here comes the leaderboard section-->
+        <div>
+            <style>
+                th{ 
+                    color:#fff;
+                        }
+            </style>
+            
+            <div class="row">
+                <div class="col">
+                    <div class="card card-body">
+
+                        <input id="search-input" class="form-control" type="text">
+
+                    </div>
+                </div>
+            </div>
+            <table class="table table-striped">
+                <tr  class="bg-info">
+                    <th  class="bg-info" data-colname="name" data-order="desc">Name &#9650</th>
+                    <th  data-colname="age" data-order="desc">rank &#9650</th>
+                    <th  data-colname="birthdate" data-order="desc">points &#9650</th>
+                </tr>
+            
+                <tbody id="myTable">
+                    
+                </tbody>
+            </table>
+        </div>
+        
+
+
+        <script src="game.js"></script>
+</body>
+</html>
