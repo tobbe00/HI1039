@@ -1,6 +1,5 @@
 package com.example.cpr;
 
-import android.animation.TypeConverter;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -9,7 +8,6 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +25,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 
 public class BluetoothActivity extends AppCompatActivity {
@@ -151,7 +148,7 @@ public class BluetoothActivity extends AppCompatActivity {
                 mHandler.post(new Runnable() {
                     public void run() {
                        // mDataView.setText(R.string.connected);
-                        TextView textViewError = findViewById(R.id.textViewError);
+                        TextView textViewError = findViewById(R.id.connectionText);
                         textViewError.setText("Connected");
                         textViewError.setVisibility(View.VISIBLE); // Make sure the TextView is visible
                         Log.d("test","changed1");
@@ -165,7 +162,7 @@ public class BluetoothActivity extends AppCompatActivity {
                 mHandler.post(new Runnable() {
                     public void run() {
                        // mDataView.setText(R.string.disconnected);
-                        TextView textViewError = findViewById(R.id.textViewError);
+                        TextView textViewError = findViewById(R.id.connectionText);
                         textViewError.setText("Disconnected");
                         textViewError.setVisibility(View.VISIBLE); // Make sure the TextView is visible
 
