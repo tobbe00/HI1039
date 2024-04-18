@@ -181,7 +181,13 @@ public class BluetoothActivity extends AppCompatActivity {
                 List<BluetoothGattService> services = gatt.getServices();
 
                 for (BluetoothGattService service : services) {
-                    Log.i("test", service.getUuid().toString());
+                    Log.i("test", "Service: "+ service.getUuid().toString());
+                    List<BluetoothGattCharacteristic> characteristics = service.getCharacteristics();
+                    for(BluetoothGattCharacteristic chara : characteristics){
+                        Log.i("test", "Charateristics: " +chara.getUuid().toString());
+                    }
+
+
                 }
 
             }
