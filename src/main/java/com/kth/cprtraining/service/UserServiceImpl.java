@@ -22,9 +22,22 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDTO saveUser(UserDTO userDTO) {
+        if(userRepository.existsByEmail(userDTO.getEmail()) || userRepository.existsByUsername(userDTO.getUsername()))
+            return null;
+
         User user = mapper.mapToEntity(userDTO);
         userDTO = mapper.mapToDTO(userRepository.save(user));
         return userDTO;
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 
     /*@Override
