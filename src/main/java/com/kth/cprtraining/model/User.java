@@ -35,4 +35,8 @@ public class User {
     private String password;
     @OneToMany( mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Round> rounds;
+
+    public String getPassword() {
+        return password;
+    }
 }

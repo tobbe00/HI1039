@@ -10,6 +10,8 @@ public interface UserService {
     UserDTO saveUser(UserDTO user);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
+
+    boolean checkPassword(UserDTO userDTO);
     /*Optional<UserDTO> findUserById(Long userId);
     List<UserDTO> findAllUsers();
     void deleteUserById(Long userId);

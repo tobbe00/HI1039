@@ -2,14 +2,13 @@ package com.kth.cprtraining.controller;
 
 import com.kth.cprtraining.dto.UserDTO;
 import com.kth.cprtraining.service.UserService;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.net.http.HttpResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -34,5 +33,22 @@ public class UserController {
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
 
+    @PostMapping("/login")
+    public Map<String, Boolean> logInUser(@RequestBody UserDTO userDTO){
+        String errorMsg = "";
+
+        boolean success=false;
+        if(userService.existsByEmail(userDTO.getEmail())){
+           if (userService.checkPassword(userDTO)){
+                success=true;
+           }
+        }else {
+            errorMsg += "Email already exists!";
+        }
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("success", success);
+        return response;
+    }
 
 }
