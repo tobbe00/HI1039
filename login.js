@@ -54,7 +54,7 @@ enterBtn.onclick=function(){
             password: password.value
         };
     
-        fetch('http://localhost:8080/register', {
+        fetch('http://localhost:8080/users', {    
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -118,7 +118,7 @@ enterBtn.onclick=function(){
         console.log(password.value);
         let emailToCheck = email.value;
         let passwordToCheck = password.value;
-        let url = `http://localhost:8080/login`;
+        let url = `http://localhost:8080/users/login`;
     
         // Constructing the request body
         let requestBody = {

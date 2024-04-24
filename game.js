@@ -13,6 +13,7 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
     //signedIn.innerHTML="signed in";
     navbarBtn.innerHTML = "<a href='/test5/login.html' class='button'>signed in</a>"
 }
+//page specific!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 /*
 var myArray = [
@@ -28,14 +29,16 @@ var myArray = [
 var myArray = []
 
 
-
+//https://reqres.in/api/users
 $.ajax({
     method:'GET',
-    url:'https://reqres.in/api/users',
+    url:'http://localhost:8080/rounds',
     success:function(response){
-        myArray=response.data
+        myArray=response
+        console.log(myArray);
         buildTable(myArray)
         console.log(response);
+        
     }
 })
 
@@ -45,7 +48,7 @@ function searchTable(value, data ){
     for(var i=0;i<data.length;i++){
         value=value.toLowerCase()
         //var name=data[i].name.toLowerCase()
-        var name = (data[i].name || '').toLowerCase();
+        var name = (data[i].username || '').toLowerCase();
         if(name.includes(value)){
             filteredData.push(data[i])
         }
@@ -72,12 +75,15 @@ function buildTable(data){
 
     for (var i = 0; i < data.length; i++){
         var row = `<tr>
-                        <td>${data[i].first_name}</td>
-                        <td>${data[i].last_name}</td>
-                        <td>${data[i].email}</td>
+                        <td>${data[i].username}</td>
+                        <td>${i+1}</td>
+                        <td>${data[i].points}</td>
                   </tr>`
         table.innerHTML += row
 
 
     }
 }
+
+
+//<td>${data[i].last_name}</td>    <td>${data[i].first_name}</td> <td>${data[i].email}</td>
