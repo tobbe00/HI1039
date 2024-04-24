@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RoundService {
-    RoundDTO saveRound(RoundDTO round);
+    boolean saveRound(Round round);
     RoundDTO findRoundById(Long roundId);
-    /*List<RoundDTO> findAllRounds();*/
+    /*List<RoundDTO> findAllRounds();
     void deleteRoundById(Long roundId);
+    */
 
 }

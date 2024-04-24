@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/cprdb
-    username: root
-    password: 1234
+    username: bear
+    password: grylls
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -12,3 +12,4 @@ spring:
 server:
   error:
     include-message: always
+

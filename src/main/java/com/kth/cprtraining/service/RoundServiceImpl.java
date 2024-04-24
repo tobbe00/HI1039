@@ -20,10 +20,14 @@ public class RoundServiceImpl implements RoundService{
     }
 
     @Override
-    public RoundDTO saveRound(RoundDTO roundDto) {
-        Round round = mapper.mapToEntity(roundDto);
-        roundDto = mapper.mapToDTO(roundRepository.save(round));
-        return roundDto;
+    public boolean saveRound(Round round) {
+        //Round round = mapper.mapToEntity(roundDto);
+        //roundDto = mapper.mapToDTO(roundRepository.save(round));
+        Round round2 = roundRepository.save(round);
+        if (round2 != null)
+            return true;
+
+        return false;
     }
 
     @Override
@@ -41,8 +45,4 @@ public class RoundServiceImpl implements RoundService{
         return (List<RoundDTO>) roundRepository.findAll();
     }*/
 
-    @Override
-    public void deleteRoundById(Long roundId) {
-        roundRepository.deleteById(roundId);
-    }
 }
