@@ -1,16 +1,14 @@
 package com.kth.cprtraining.controller;
 
-import com.kth.cprtraining.dto.RoundDTO;
-import com.kth.cprtraining.dto.UserDTO;
+import com.kth.cprtraining.dto.LeaderboardDTO;
 import com.kth.cprtraining.model.Round;
 import com.kth.cprtraining.service.RoundService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/rounds")
@@ -28,5 +26,14 @@ public class RoundController {
             status = true;
         }
         return new ResponseEntity<>(status, HttpStatus.CREATED);
+    }
+
+
+    @GetMapping//by id
+    public List<LeaderboardDTO> getUser(){
+        // return userService.getUserById(id); detta e med geduserbyid efter kommer nr2 med optional
+        List<LeaderboardDTO> leaderboardList=new ArrayList<>();
+        leaderboardList=roundService.fillLeaderboard();
+        return leaderboardList;
     }
 }

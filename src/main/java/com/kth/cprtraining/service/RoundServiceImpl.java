@@ -1,11 +1,13 @@
 package com.kth.cprtraining.service;
 
+import com.kth.cprtraining.dto.LeaderboardDTO;
 import com.kth.cprtraining.dto.RoundDTO;
 import com.kth.cprtraining.mapper.Mapper;
 import com.kth.cprtraining.model.Round;
 import com.kth.cprtraining.repository.RoundRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Service
@@ -38,6 +40,21 @@ public class RoundServiceImpl implements RoundService{
             roundDTO = mapper.mapToDTO(opt.get());
         }
         return roundDTO;
+    }
+
+    @Override
+    public List<LeaderboardDTO> fillLeaderboard() {
+        List<Round> rounds = roundRepository.findTop100ByOrderByPointsDesc();
+        List<LeaderboardDTO> leaderboardDTOs = new ArrayList<>();
+
+        for (Round round : rounds) {
+            LeaderboardDTO dto = new LeaderboardDTO();
+            dto.setUsername(round.getUsername());
+            dto.setPoints(round.getPoints());
+            leaderboardDTOs.add(dto);
+        }
+
+        return leaderboardDTOs;
     }
 
     /*@Override
