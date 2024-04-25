@@ -85,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         //Ändra url beroende på wifi ip
-            String url = "http://130.229.131.186:8080";
+            String url = "http://130.229.137.214:8080";
 
         buttonTest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d("test","button works");
 
-                roundApi.save(new Round(600,1))
+                roundApi.save(new Round(500,1))
                         .enqueue(new Callback<Round>() {
                             @Override
                             public void onResponse(Call<Round> call, Response<Round> response) {
@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
             public void run() {
                 //Background work
                 try {
-                    URL myUrl = new URL("http://192.168.1.44:8080");
+                    URL myUrl = new URL("http://130.229.137.214:8080");
                     URLConnection connection = myUrl.openConnection();
                     connection.setConnectTimeout(1000);
                     connection.connect();
