@@ -7,6 +7,15 @@
     android:orientation="vertical"
     tools:context=".BluetoothActivity">
 
+    <TextView
+        android:id="@+id/dataText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textColor="#FF0000"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
     <Button
         android:id="@+id/checkConnectionButton"
         android:layout_width="wrap_content"

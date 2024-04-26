@@ -37,6 +37,7 @@ public class BluetoothActivity extends AppCompatActivity {
     boolean isConnected = false;
     private BluetoothGatt mBluetoothGatt = null;
 
+    private TextView dataText;
     private Handler mHandler;
 
 
@@ -54,6 +55,8 @@ public class BluetoothActivity extends AppCompatActivity {
         this.registerReceiver(broadcastReceiver, filter);
 
         Button checkConnectionButton = findViewById(R.id.checkConnectionButton);
+
+        dataText = findViewById(R.id.dataText);
 
 
         checkConnectionButton.setOnClickListener(new View.OnClickListener() {
@@ -239,7 +242,15 @@ public class BluetoothActivity extends AppCompatActivity {
             String s = new String(data, StandardCharsets.UTF_8);
             count++;
 
+            mHandler.post(new Runnable() {
+                public void run() {
+                    dataText.setVisibility(View.VISIBLE);
+                    dataText.setText(s);
+                }
+            });
             Log.d("test1", s + " " + count);
+
+
 
 
             /*if (UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e").equals(characteristic.getUuid())) {
