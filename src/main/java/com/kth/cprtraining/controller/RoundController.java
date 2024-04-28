@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,10 +29,12 @@ public class RoundController {
 
 
     @GetMapping//by id
-    public List<LeaderboardDTO> getUser(){
+    public List<LeaderboardDTO> getLeaderboardTop100(){
         // return userService.getUserById(id); detta e med geduserbyid efter kommer nr2 med optional
-        List<LeaderboardDTO> leaderboardList=new ArrayList<>();
+        /*List<LeaderboardDTO> leaderboardList=new ArrayList<>();
         leaderboardList=roundService.fillLeaderboard();
         return leaderboardList;
+         */
+        return roundService.getLeaderboardTop100();
     }
 }

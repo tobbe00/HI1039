@@ -10,7 +10,7 @@ public interface RoundService {
     boolean saveRound(Round round);
     RoundDTO findRoundById(Long roundId);
 
-    List<LeaderboardDTO> fillLeaderboard();
+    List<LeaderboardDTO> getLeaderboardTop100();
     /*List<RoundDTO> findAllRounds();
     void deleteRoundById(Long roundId);
     */

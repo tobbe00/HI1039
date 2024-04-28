@@ -43,16 +43,15 @@ public class RoundServiceImpl implements RoundService{
     }
 
     @Override
-    public List<LeaderboardDTO> fillLeaderboard() {
-        List<Round> rounds = roundRepository.findTop100ByOrderByPointsDesc();
+    public List<LeaderboardDTO> getLeaderboardTop100() {
+        List<Round> top100Rounds = roundRepository.findTop100ByOrderByPointsDesc();
         List<LeaderboardDTO> leaderboardDTOs = new ArrayList<>();
-        int i=0;
-        for (Round round : rounds) {
-            i++;
+        int i=1;
+        for (Round round : top100Rounds) {
             LeaderboardDTO dto = new LeaderboardDTO();
             dto.setUsername(round.getUsername());
             dto.setPoints(round.getPoints());
-            dto.setRank(i);
+            dto.setRank(i++);
             leaderboardDTOs.add(dto);
         }
 
