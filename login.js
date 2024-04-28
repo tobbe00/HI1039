@@ -68,8 +68,9 @@ enterBtn.onclick=function(){
                 // Registration successful, handle accordingly
                 //console.log(response.statusText);
                 //console.log('User registered successfully');
-                sessionStorage.setItem("email", email.value);
-                sessionStorage.setItem("isLoggedIn", true);
+                storeLoggedIn();
+                //sessionStorage.setItem("email", email.value);
+                //sessionStorage.setItem("isLoggedIn", true);
                 // Redirect or perform any other actions as needed
             } else {
                 // Registration failed, handle accordingly
@@ -137,6 +138,7 @@ enterBtn.onclick=function(){
             .then(data => {
                 console.log(data); // Log the response data to the console
                 if (data.success) {
+                    console.log("vi borde stora att vi lyckades logga in");
                     storeLoggedIn();
                 }
             })
@@ -154,11 +156,11 @@ enterBtn.onclick=function(){
 
 //sparar till seccion datat att man är inloggat och med vilken mail
 function storeLoggedIn(){
-    if(email.value=="calle361@gmail.com"&&password.value=="1234"){
+    
         console.log("du är inloggad!");
         sessionStorage.setItem("email",email.value);
         sessionStorage.setItem("isLoggedIn",true);
-    }
+    
 }
 
 //visar för sidan att man redan e inloggad

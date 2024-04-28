@@ -51,9 +51,11 @@ function searchTable(value, data ){
         var name = (data[i].username || '').toLowerCase();
         if(name.includes(value)){
             filteredData.push(data[i])
+            
+            
         }
     }
-
+    //console.log(filteredData);
     return filteredData
 }
 
@@ -61,7 +63,7 @@ function searchTable(value, data ){
 
 $('#search-input').on('keyup', function(){
     var value=$(this).val()
-    console.log('value',value)
+    //console.log('value',value)
     var data=searchTable(value,myArray)
     buildTable(data)
 })
@@ -72,11 +74,11 @@ $('#search-input').on('keyup', function(){
 
 function buildTable(data){
     var table = document.getElementById('myTable')
-
+    table.innerHTML='';
     for (var i = 0; i < data.length; i++){
         var row = `<tr>
                         <td>${data[i].username}</td>
-                        <td>${i+1}</td>
+                        <td>${data[i].rank}</td>
                         <td>${data[i].points}</td>
                   </tr>`
         table.innerHTML += row
@@ -84,6 +86,8 @@ function buildTable(data){
 
     }
 }
+
+
 
 
 //<td>${data[i].last_name}</td>    <td>${data[i].first_name}</td> <td>${data[i].email}</td>
