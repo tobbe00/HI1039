@@ -21,4 +21,7 @@ public class Round {
     @ManyToOne
     private User user;
 
+    @Column
+    private String username;
+
 }

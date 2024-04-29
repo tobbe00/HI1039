@@ -1,11 +1,13 @@
 package com.kth.cprtraining.service;
 
+import com.kth.cprtraining.dto.LeaderboardDTO;
 import com.kth.cprtraining.dto.RoundDTO;
 import com.kth.cprtraining.mapper.Mapper;
 import com.kth.cprtraining.model.Round;
 import com.kth.cprtraining.repository.RoundRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Service
@@ -20,10 +22,14 @@ public class RoundServiceImpl implements RoundService{
     }
 
     @Override
-    public RoundDTO saveRound(RoundDTO roundDto) {
-        Round round = mapper.mapToEntity(roundDto);
-        roundDto = mapper.mapToDTO(roundRepository.save(round));
-        return roundDto;
+    public boolean saveRound(Round round) {
+        //Round round = mapper.mapToEntity(roundDto);
+        //roundDto = mapper.mapToDTO(roundRepository.save(round));
+        Round round2 = roundRepository.save(round);
+        if (round2 != null)
+            return true;
+
+        return false;
     }
 
     @Override
@@ -36,13 +42,25 @@ public class RoundServiceImpl implements RoundService{
         return roundDTO;
     }
 
+    @Override
+    public List<LeaderboardDTO> getLeaderboardTop100() {
+        List<Round> top100Rounds = roundRepository.findTop100ByOrderByPointsDesc();
+        List<LeaderboardDTO> leaderboardDTOs = new ArrayList<>();
+        int i=1;
+        for (Round round : top100Rounds) {
+            LeaderboardDTO dto = new LeaderboardDTO();
+            dto.setUsername(round.getUsername());
+            dto.setPoints(round.getPoints());
+            dto.setRank(i++);
+            leaderboardDTOs.add(dto);
+        }
+
+        return leaderboardDTOs;
+    }
+
     /*@Override
     public List<RoundDTO> findAllRounds() {
         return (List<RoundDTO>) roundRepository.findAll();
     }*/
 
-    @Override
-    public void deleteRoundById(Long roundId) {
-        roundRepository.deleteById(roundId);
-    }
 }
