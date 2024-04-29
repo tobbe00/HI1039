@@ -1,4 +1,5 @@
-
+//import bcrypt from '../test5/node_modules/bcrypt'
+//const bcrypt=require('bcrypt');
 const menu=document.querySelector('#mobile-menu');
 const menuLinks=document.querySelector('.navbar__menu');
 
@@ -47,13 +48,15 @@ enterBtn.onclick=function(){
         //sessionStorage.setItem("email",email.value);
         //sessionStorage.setItem("isLoggedIn",true);
         //här ska vi skicka data för att skapa ett nytt konto.
-
+        var saltToSend=getSalt();
+        var passwordToSend=getHashedPassword(password.value,saltToSend);
         const userData = {
             username: username.value,
             email: email.value,
-            password: password.value
+            password: passwordToSend,//password.value,
+            salt: saltToSend//nyligen tillagd
         };
-    
+        console.log(userData);
         fetch('http://localhost:8080/users', {    
             method: 'POST',
             headers: {
@@ -90,12 +93,11 @@ enterBtn.onclick=function(){
         });
 
     }else{
-        /*        
-        console.log(email.value);
-        console.log(password.value)
+               
+        let salt;
         let emailameToCheck=email.value;
-        let url = `http://localhost:8080/userByEmail?email=${emailameToCheck}`;
-        fetch(url)
+        let url2 = `http://localhost:8080/users/salt?email=${emailameToCheck}`;
+        fetch(url2)
         .then(response => {
             // This function is called when the response is received
             // You can access the response data here
@@ -103,22 +105,11 @@ enterBtn.onclick=function(){
         })
         .then(data => {
             // This function is called with the parsed JSON data
-            console.log(data.userName); // Log the data to the console
+            console.log(data); // Log the data to the console
             // You can now work with the data as needed
-            if(data.email==email.value){
-                storeLoggedIn();
-            }
-            //stod data här
-        })  .catch(error => {
-            // This function is called if an error occurs during the fetch
-            console.error('Error fetching data:', error);
-        });
-            
-        */
-        console.log(email.value);
-        console.log(password.value);
-        let emailToCheck = email.value;
-        let passwordToCheck = password.value;
+            salt=data.salt
+            let emailToCheck = email.value;
+        let passwordToCheck = getHashedPassword2(password.value,salt);//password.value;
         let url = `http://localhost:8080/users/login`;
     
         // Constructing the request body
@@ -138,13 +129,21 @@ enterBtn.onclick=function(){
             .then(data => {
                 console.log(data); // Log the response data to the console
                 if (data.success) {
-                    console.log("vi borde stora att vi lyckades logga in");
+                   
                     storeLoggedIn();
                 }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
+        })  .catch(error => {
+            // This function is called if an error occurs during the fetch
+            console.error('Error fetching data:', error);
+        });
+            
+        
+        
+        
     }
     if(sessionStorage.getItem("isLoggedIn")=="true"){
         console.log(sessionStorage.getItem("isLoggedIn"))
@@ -168,4 +167,30 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
     console.log(sessionStorage.getItem("isLoggedIn"))
     //signedIn.innerHTML="signed in";
     navbarBtn.innerHTML = "<a href='/test5/login.html' class='button'>signed in</a>"
+}
+
+
+
+
+//här övar jag på hashning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//const testpassword="Password1";
+//const salt = CryptoJS.lib.WordArray.random(16); // Generate a random 128-bit salt
+//const saltedPassword = password + salt.toString(CryptoJS.enc.Base64); // Append the salt to the password
+//const hash = CryptoJS.SHA256(saltedPassword).toString(); // Hash the salted password
+
+//console.log({testpassword,hash})
+function getSalt(){
+    const salt2= CryptoJS.lib.WordArray.random(16); // Generate a random 128-bit salt
+    return salt2.toString(CryptoJS.enc.Base64);
+}
+
+function getHashedPassword(password,salt){
+    const saltedPassword = password + salt.toString(CryptoJS.enc.Base64); // Append the salt to the password
+    const hash = CryptoJS.SHA256(saltedPassword).toString(); // Hash the salted password
+    return hash;
+}
+function getHashedPassword2(password,salt){
+    const saltedPassword = password + salt; // Append the salt to the password
+    const hash = CryptoJS.SHA256(saltedPassword).toString(); // Hash the salted password
+    return hash;
 }
