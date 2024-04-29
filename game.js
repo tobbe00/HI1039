@@ -15,79 +15,119 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
 }
 //page specific!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-/*
-var myArray = [
-    
-    {'name':'Michael', 'age':'30', 'birthdate':'11/10/1989'},
-    {'name':'Mila', 'age':'32', 'birthdate':'10/1/1989'},
-    {'name':'Paul', 'age':'29', 'birthdate':'10/14/1990'},
-    {'name':'Dennis', 'age':'25', 'birthdate':'11/29/1993'},
-    {'name':'Tim', 'age':'27', 'birthdate':'3/12/1991'},
-    {'name':'Erik', 'age':'24', 'birthdate':'10/31/1995'},
-]
-*/
-var myArray = []
+var myGamePiece;
+var myBackGround;
+var myTrail = [];
 
+function startGame() {
+    myGamePiece = new component(0, 16, 16, "gameImages/smiley.gif", 380, 300, "image");
+    myBackGround = new component(-1447/6000, 1500,400, "gameImages/graphbackground2.png", 0,0, "image");
+    myGameArea.start();
+}
 
-//https://reqres.in/api/users
-$.ajax({
-    method:'GET',
-    url:'http://localhost:8080/rounds',
-    success:function(response){
-        myArray=response
-        console.log(myArray);
-        buildTable(myArray)
-        console.log(response);
-        
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 760;
+        this.canvas.height = 400;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[10]);
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 20);
+        },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+    stop : function() {
+        clearInterval(this.interval);
     }
-})
+}
 
-
-function searchTable(value, data ){
-    var filteredData=[]
-    for(var i=0;i<data.length;i++){
-        value=value.toLowerCase()
-        //var name=data[i].name.toLowerCase()
-        var name = (data[i].username || '').toLowerCase();
-        if(name.includes(value)){
-            filteredData.push(data[i])
-            
-            
+function component(speed, width, height, color, x, y, type) {
+    this.type = type;
+    if (type == "image") {
+        this.image = new Image();
+        this.image.src = color;
+    }
+    this.width = width;
+    this.height = height;
+    this.speedX = speed;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;    
+    this.update = function() {
+        ctx = myGameArea.context;
+        if (type == "image") {
+            ctx.drawImage(this.image, 
+                this.x, 
+                this.y,
+                this.width, this.height);
+        } else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
         }
     }
-    //console.log(filteredData);
-    return filteredData
-}
-
-
-
-$('#search-input').on('keyup', function(){
-    var value=$(this).val()
-    //console.log('value',value)
-    var data=searchTable(value,myArray)
-    buildTable(data)
-})
-
-
-
-
-
-function buildTable(data){
-    var table = document.getElementById('myTable')
-    table.innerHTML='';
-    for (var i = 0; i < data.length; i++){
-        var row = `<tr>
-                        <td>${data[i].username}</td>
-                        <td>${data[i].rank}</td>
-                        <td>${data[i].points}</td>
-                  </tr>`
-        table.innerHTML += row
-
-
+    this.newPos = function() {
+        this.x += this.speedX;
+        this.y += this.speedY;        
     }
 }
 
 
 
+function moveup() {
+    myGamePiece.speedY -= 1/2;
+}
 
-//<td>${data[i].last_name}</td>    <td>${data[i].first_name}</td> <td>${data[i].email}</td>
+function movedown() {
+    myGamePiece.speedY += 1/2; 
+}
+
+
+function updateGameArea() {
+    var x, y;
+    myGameArea.clear();
+    myBackGround.update();
+    myBackGround.newPos();
+    
+    myGameArea.frameNo += 1;
+    if (myGameArea.frameNo == 1 || everyinterval(1)) {
+        x = myGamePiece.x;
+        y = myGamePiece.y;
+        myTrail.push(new component(-1447/6000, 10, 10, "gameImages/redTrail.png", x, y, "image"));
+    }
+    for (i = 0; i < myTrail.length; i += 1) {
+        myTrail[i].newPos();
+        myTrail[i].update();
+    }
+
+    myGamePiece.newPos();
+    myGamePiece.update();   
+}
+
+function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+    return false;
+}
+//about reeding from api!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function fetchData() {
+    fetch('http://localhost:8080/game/extreme')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Process the data
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
+// Fetch data every 1 seconds
+setInterval(fetchData, 100);
+

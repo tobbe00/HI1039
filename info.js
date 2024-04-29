@@ -18,6 +18,71 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
 
 //page specific
 
+var myArray = []
+
+
+//https://reqres.in/api/users
+$.ajax({
+    method:'GET',
+    url:'http://localhost:8080/rounds',
+    success:function(response){
+        myArray=response
+        console.log(myArray);
+        buildTable(myArray)
+        console.log(response);
+        
+    }
+})
+
+
+function searchTable(value, data ){
+    var filteredData=[]
+    for(var i=0;i<data.length;i++){
+        value=value.toLowerCase()
+        //var name=data[i].name.toLowerCase()
+        var name = (data[i].username || '').toLowerCase();
+        if(name.includes(value)){
+            filteredData.push(data[i])
+            
+            
+        }
+    }
+    //console.log(filteredData);
+    return filteredData
+}
+
+
+
+$('#search-input').on('keyup', function(){
+    var value=$(this).val()
+    //console.log('value',value)
+    var data=searchTable(value,myArray)
+    buildTable(data)
+})
+
+
+
+
+
+function buildTable(data){
+    var table = document.getElementById('myTable')
+    table.innerHTML='';
+    for (var i = 0; i < data.length; i++){
+        var row = `<tr>
+                        <td>${data[i].username}</td>
+                        <td>${data[i].rank}</td>
+                        <td>${data[i].points}</td>
+                  </tr>`
+        table.innerHTML += row
+
+
+    }
+}
+
+
+
+
+//<td>${data[i].last_name}</td>    <td>${data[i].first_name}</td> <td>${data[i].email}</td>
 
 
 

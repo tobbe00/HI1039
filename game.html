@@ -9,8 +9,8 @@
     <title>PRODJECT CPR website</title>
     <link rel="stylesheet" href="gamestyle.css">
 </head>
-<body>
-    <nav class="navbar">
+<body onload="startGame()">
+    <nav class="navbar" id="navbarTot">
         <div class="navbar__container">
             <a href="/test5/index.html" id="navbar__logo">PROJECT CPR</a>
             <div class="navbar__toggle" id="mobile-menu">
@@ -37,36 +37,17 @@
                 </li>
             </ul>
         </div>
-        <!--here comes the leaderboard section-->
+    </nav>
+        <!--here comes the game section-->
+       
         <div>
-            <style>
-                th{ 
-                    color:#fff;
-                        }
-            </style>
-            
-            <div class="row">
-                <div class="col">
-                    <div class="card card-body">
+            <div style="text-align:center;width:480px;">
+                <button onmousedown="moveup()" ontouchstart="moveup()">UP</button><br><br>
+                <button onmousedown="movedown()" ontouchstart="movedown()">DOWN</button>
+              </div>
 
-                        <input id="search-input" class="form-control" type="text">
-
-                    </div>
-                </div>
-            </div>
-            <table class="table table-striped">
-                <tr  class="bg-info">
-                    <th  class="bg-info" data-colname="name" data-order="desc">Name &#9650</th>
-                    <th  data-colname="age" data-order="desc">rank &#9650</th>
-                    <th  data-colname="birthdate" data-order="desc">points &#9650</th>
-                </tr>
-            
-                <tbody id="myTable">
-                    
-                </tbody>
-            </table>
         </div>
-        
+        <p>Test.</p>
 
 
         <script src="game.js"></script>
