@@ -43,6 +43,12 @@ public class UserServiceImpl implements UserService{
 
     }
 
+    @Override
+    public String findSalt(String email) {
+        User user=userRepository.findUserByEmail(email);
+        return user.getSalt();
+    }
+
 /*
     public boolean saveUser(UserFrontEnd userFrontEnd){
 
