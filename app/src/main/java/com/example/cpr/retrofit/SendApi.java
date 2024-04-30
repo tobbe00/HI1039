@@ -10,4 +10,5 @@ public interface SendApi {
 
     @POST("/game/send")
     Call<Batch> send(@Body Batch batch);
+
 }

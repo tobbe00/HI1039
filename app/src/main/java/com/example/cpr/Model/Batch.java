@@ -11,6 +11,10 @@ public class Batch {
         this.id = id;
     }
 
+    public Batch(int[] batch) {
+        this.batch = batch;
+    }
+
     public int[] getBatch() {
         return batch;
     }

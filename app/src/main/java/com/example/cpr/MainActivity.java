@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             batch[count]=value;
+            Log.d("test1","count: "+count);
             count++;
 
             if(batch[4]!=0){
@@ -169,23 +170,28 @@ public class MainActivity extends AppCompatActivity {
                 count= 0;
                 Batch fullBatch = new Batch(batch,batchId);
                 Log.d("test1",fullBatch.toString());
-                sendApi.send(fullBatch).enqueue(new Callback<Batch>(){
 
+                sendApi.send(fullBatch).enqueue(new Callback<Batch>() {
                     @Override
                     public void onResponse(Call<Batch> call, Response<Batch> response) {
-                        Log.d("test1","Save successful");
+                        Log.d("test1", "Save successful");
                     }
 
                     @Override
                     public void onFailure(Call<Batch> call, Throwable t) {
-                        Log.d("test1","Save failed");
+                        Log.d("test1", "Save failed");
                     }
-
                 });
+
                 for(int i=0;i<batch.length;i++){
                   //  Log.d("test1","value1 "+batch[i]);
                     batch[i]=0;
                 }
+
+               /* for(int i=0;i<batch.length;i++){
+                    Log.d("test1","Batch after: "+batch[i]);
+                }*/
+
                 batchId++;
             }
 
