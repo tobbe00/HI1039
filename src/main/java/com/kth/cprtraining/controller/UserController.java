@@ -1,5 +1,6 @@
 package com.kth.cprtraining.controller;
 
+import com.kth.cprtraining.dto.ExtremePointDTO;
 import com.kth.cprtraining.dto.UserDTO;
 import com.kth.cprtraining.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,14 @@ public class UserController {
 
         Map<String, Boolean> response = new HashMap<>();
         response.put("success", success);
+        return response;
+    }
+    @GetMapping("/salt")
+    public Map<String, String> sendSalt(String email){
+        // return userService.getUserById(id); detta e med geduserbyid efter kommer nr2 med optional
+
+        Map<String, String> response = new HashMap<>();
+        response.put("salt", userService.findSalt(email));
         return response;
     }
 

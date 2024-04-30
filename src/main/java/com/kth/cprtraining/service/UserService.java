@@ -12,6 +12,7 @@ public interface UserService {
     boolean existsByEmail(String email);
 
     boolean checkPassword(UserDTO userDTO);
+    String findSalt(String email);
     /*Optional<UserDTO> findUserById(Long userId);
     List<UserDTO> findAllUsers();
     void deleteUserById(Long userId);
