@@ -22,6 +22,7 @@ import com.example.cpr.retrofit.RetrofitService;
 import com.example.cpr.retrofit.SendApi;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.nio.ByteBuffer;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private BluetoothGatt mBluetoothGatt = null;
+    private List<Integer> batch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         startButton = findViewById(R.id.startButton);
         countdownText = findViewById(R.id.countDownTimer); // Make sure you have a TextView in your layout for the countdown
+        batch = new ArrayList<>();
 
         RetrofitService retrofitService = new RetrofitService();
 
@@ -138,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         //temporary for debug purposes
         int count = 0;
         int batchId =0;
-        int batch[] = new int[5];
+        //int batch[] = new int[5];
 
         /**
          * Callback called on characteristic changes, e.g. when a sensor data value is changed.
@@ -157,42 +160,27 @@ public class MainActivity extends AppCompatActivity {
             //ascii to int
             int value = (s.charAt(0)-48)*100+(s.charAt(1)-48)*10+(s.charAt(2)-48);
 
-           // Log.d("test1",""+value);
+            Log.d("test1",""+value);
 
-
-            batch[count]=value;
-            Log.d("test1","count: "+count);
+            batch.add(value);
             count++;
 
-            if(batch[4]!=0){
+            if(batch.size()==5){
 
-
-                count= 0;
-                Batch fullBatch = new Batch(batch,batchId);
-                Log.d("test1",fullBatch.toString());
-
-                sendApi.send(fullBatch).enqueue(new Callback<Batch>() {
+                Log.d("test1",batch.toString());
+                sendApi.send(batch).enqueue(new Callback<List<Integer>>() {
                     @Override
-                    public void onResponse(Call<Batch> call, Response<Batch> response) {
+                    public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
                         Log.d("test1", "Save successful");
                     }
 
                     @Override
-                    public void onFailure(Call<Batch> call, Throwable t) {
+                    public void onFailure(Call<List<Integer>> call, Throwable t) {
                         Log.d("test1", "Save failed");
                     }
                 });
 
-                for(int i=0;i<batch.length;i++){
-                  //  Log.d("test1","value1 "+batch[i]);
-                    batch[i]=0;
-                }
-
-               /* for(int i=0;i<batch.length;i++){
-                    Log.d("test1","Batch after: "+batch[i]);
-                }*/
-
-                batchId++;
+                batch.clear();
             }
 
 
