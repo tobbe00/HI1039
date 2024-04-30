@@ -17,15 +17,26 @@ import android.widget.TextView;
 //import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.cpr.Model.Batch;
+import com.example.cpr.retrofit.RetrofitService;
+import com.example.cpr.retrofit.SendApi;
+
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private Button startButton;
     private TextView countdownText;
+    private SendApi sendApi;
 
 
     private BluetoothGatt mBluetoothGatt = null;
@@ -38,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
 
         startButton = findViewById(R.id.startButton);
         countdownText = findViewById(R.id.countDownTimer); // Make sure you have a TextView in your layout for the countdown
+
+        RetrofitService retrofitService = new RetrofitService();
+
+        sendApi = retrofitService.getRetrofit().create(SendApi.class);
+
 
         BluetoothDevice device = getIntent().getExtras().getParcelable("btdevice");
 
@@ -121,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
 
         //temporary for debug purposes
         int count = 0;
+        int batchId =0;
+        int batch[] = new int[5];
 
         /**
          * Callback called on characteristic changes, e.g. when a sensor data value is changed.
@@ -135,7 +153,45 @@ public class MainActivity extends AppCompatActivity {
             byte[] data = characteristic.getValue();
 
             String s = new String(data, StandardCharsets.UTF_8);
+
+            //ascii to int
+            int value = (s.charAt(0)-48)*100+(s.charAt(1)-48)*10+(s.charAt(2)-48);
+
+           // Log.d("test1",""+value);
+
+
+            batch[count]=value;
             count++;
+
+            if(batch[4]!=0){
+
+
+                count= 0;
+                Batch fullBatch = new Batch(batch,batchId);
+                Log.d("test1",fullBatch.toString());
+                sendApi.send(fullBatch).enqueue(new Callback<Batch>(){
+
+                    @Override
+                    public void onResponse(Call<Batch> call, Response<Batch> response) {
+                        Log.d("test1","Save successful");
+                    }
+
+                    @Override
+                    public void onFailure(Call<Batch> call, Throwable t) {
+                        Log.d("test1","Save failed");
+                    }
+
+                });
+                for(int i=0;i<batch.length;i++){
+                  //  Log.d("test1","value1 "+batch[i]);
+                    batch[i]=0;
+                }
+                batchId++;
+            }
+
+
+
+
 
         /*mHandler.post(new Runnable() {
             public void run() {
@@ -143,7 +199,8 @@ public class MainActivity extends AppCompatActivity {
                 dataText.setText(s);
             }
         });*/
-            Log.d("test1", s + " " + count);
+
+
 
 
 
@@ -169,4 +226,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
     };
+
+    public static int byteArrayToIntBigEndian(byte[] byteArray) {
+        if (byteArray.length < 4) {
+            throw new IllegalArgumentException("Byte array too short!");
+        }
+        return ByteBuffer.wrap(byteArray)
+                .order(ByteOrder.BIG_ENDIAN)
+                .getInt();
+    }
+
+    public static int byteArrayToIntLittleEndian(byte[] byteArray) {
+        if (byteArray.length < 4) {
+            throw new IllegalArgumentException("Byte array too short!");
+        }
+        return ByteBuffer.wrap(byteArray)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .getInt();
+    }
+
 }

@@ -12,4 +12,7 @@ import retrofit2.http.POST;
 public interface RoundApi {
     @POST("/rounds/save")
     Call<Round> save(@Body Round round);
+
+    /*@POST("/rounds/save")
+    Call<Round> send(@Body int data);*/
 }
