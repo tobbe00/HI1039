@@ -18,6 +18,8 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
 var myGamePiece;
 var myBackGround;
 var myTrail = [];
+var testNumbers = [0, 350, 200, 350, 50];
+var currentNum = 0;
 
 function startGame() {
     myGamePiece = new component(0, 16, 16, "gameImages/smiley.gif", 380, 300, "image");
@@ -99,6 +101,24 @@ function updateGameArea() {
     for (i = 0; i < myTrail.length; i += 1) {
         myTrail[i].newPos();
         myTrail[i].update();
+    }
+
+    if(myGamePiece.y > testNumbers[currentNum]){
+        if(myGamePiece.speedY > 0)
+        {
+            currentNum += 1;
+        }
+        myGamePiece.speedY = -6;
+    }
+    if(myGamePiece.y < testNumbers[currentNum]){
+        if(myGamePiece.speedY < 0)
+        {
+            currentNum += 1;
+        }
+        myGamePiece.speedY = 6;
+    }
+    if(currentNum >= testNumbers.length){
+        currentNum = 0;
     }
 
     myGamePiece.newPos();
