@@ -63,7 +63,7 @@ public class GameController {
     public Batch handleBatch(Batch batch){
         int displace=650;
         for (int j = 0; j < 5; j++) {
-            batch.setTheBatchATIndex(displace-batch.getBatchIntAtID(i),i);
+            batch.setTheBatchATIndex(displace-batch.getBatchIntAtID(j),j);
         }
         return batch;
     }

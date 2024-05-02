@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class Batch {
     
-    private int[] theBatch;
+    private int[] theBatch=new int[5];
     private int batchID;
 
     public void setTheBatchATIndex(int theBatchInt,int index) {
