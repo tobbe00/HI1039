@@ -111,6 +111,7 @@ function everyinterval(n) {
 }
 //about reeding from api!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+let oldId=10;
   function fetchData() {
     fetch('http://localhost:8080/game/extreme')
         .then(response => {
@@ -121,7 +122,11 @@ function everyinterval(n) {
         })
         .then(data => {
             // Process the data
-            console.log(data);
+            
+            if(oldId != data.id){
+                console.log(data);
+            }
+            oldId=data.id;
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
