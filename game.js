@@ -18,8 +18,9 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
 var myGamePiece;
 var myBackGround;
 var myTrail = [];
-var testNumbers = [0, 350, 200, 350, 50];
+var testNumbers = [];
 var currentNum = 0;
+
 
 function startGame() {
     myGamePiece = new component(0, 16, 16, "gameImages/smiley.gif", 380, 300, "image");
@@ -145,6 +146,14 @@ let oldId=10;
             
             if(oldId != data.id){
                 console.log(data);
+
+                if(data.maxBeforeMin){
+                    testNumbers.push(data.maxPressure/10);
+                    testNumbers.push(data.minPressure/10);
+                }else{
+                    testNumbers.push(data.minPressure/10);
+                    testNumbers.push(data.maxPressure/10);
+                }
             }
             oldId=data.id;
         })
