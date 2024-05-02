@@ -148,11 +148,11 @@ let oldId=10;
                 console.log(data);
 
                 if(data.maxBeforeMin){
-                    testNumbers.push(data.maxPressure/10);
-                    testNumbers.push(data.minPressure/10);
+                    testNumbers.push(data.maxPressure);
+                    testNumbers.push(data.minPressure);
                 }else{
-                    testNumbers.push(data.minPressure/10);
-                    testNumbers.push(data.maxPressure/10);
+                    testNumbers.push(data.minPressure);
+                    testNumbers.push(data.maxPressure);
                 }
             }
             oldId=data.id;
