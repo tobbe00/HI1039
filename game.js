@@ -18,6 +18,9 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
 var myGamePiece;
 var myBackGround;
 var myTrail = [];
+var testNumbers = [];
+var currentNum = 0;
+
 
 function startGame() {
     myGamePiece = new component(0, 16, 16, "gameImages/smiley.gif", 380, 300, "image");
@@ -101,6 +104,24 @@ function updateGameArea() {
         myTrail[i].update();
     }
 
+    if(myGamePiece.y > testNumbers[currentNum]){
+        if(myGamePiece.speedY > 0)
+        {
+            currentNum += 1;
+        }
+        myGamePiece.speedY = -6;
+    }
+    if(myGamePiece.y < testNumbers[currentNum]){
+        if(myGamePiece.speedY < 0)
+        {
+            currentNum += 1;
+        }
+        myGamePiece.speedY = 6;
+    }
+    if(currentNum >= testNumbers.length){
+        currentNum = 0;
+    }
+
     myGamePiece.newPos();
     myGamePiece.update();   
 }
@@ -111,6 +132,7 @@ function everyinterval(n) {
 }
 //about reeding from api!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+let oldId=10;
   function fetchData() {
     fetch('http://localhost:8080/game/extreme')
         .then(response => {
@@ -121,9 +143,19 @@ function everyinterval(n) {
         })
         .then(data => {
             // Process the data
-            console.log(data);
             
-          
+            if(oldId != data.id){
+                console.log(data);
+
+                if(data.maxBeforeMin){
+                    testNumbers.push(data.maxPressure);
+                    testNumbers.push(data.minPressure);
+                }else{
+                    testNumbers.push(data.minPressure);
+                    testNumbers.push(data.maxPressure);
+                }
+            }
+            oldId=data.id;
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
