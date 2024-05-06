@@ -71,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (username.equals("Admin") && password.equals("123")) {
                     // Successful login
                     Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                    //saveLoginState(true);
                     // Create an Intent to start MainActivity
                     Intent intent = new Intent(LoginActivity.this, BluetoothActivity.class);
                     startActivity(intent);

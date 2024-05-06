@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.UUID;
 
 
-public class BluetoothActivity extends AppCompatActivity {
+public class BluetoothActivity extends BaseActivity {
 
 
     BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

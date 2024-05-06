@@ -33,14 +33,18 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity{
 
 
     private Button startButton;
 
+    private Button restartButton;
+    private TextView finishedText;
     private TextView prepareText;
     private TextView countdownText;
     private SendApi sendApi;
+    private CountDownTimer preparationCountDownTimer;
+    private CountDownTimer mainCountDownTimer;
 
 
     private BluetoothGatt mBluetoothGatt = null;
@@ -54,49 +58,106 @@ public class MainActivity extends AppCompatActivity {
         prepareText = findViewById(R.id.prepareText);
         startButton = findViewById(R.id.startButton);
         countdownText = findViewById(R.id.countDownTimer);
+        finishedText = findViewById(R.id.finishedRound);
+        restartButton = findViewById(R.id.restartButton);
+        restartButton.setEnabled(false);
+        restartButton.setVisibility(View.GONE);
         batch = new ArrayList<>();
 
         RetrofitService retrofitService = new RetrofitService();
 
         sendApi = retrofitService.getRetrofit().create(SendApi.class);
 
-
-        BluetoothDevice device = getIntent().getExtras().getParcelable("btdevice");
-
-        mBluetoothGatt = device.connectGatt(MainActivity.this, false, mBtGattCallback);
-
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startButton.setVisibility(View.GONE);
-                prepareText.setVisibility(View.VISIBLE);
-                new CountDownTimer(3000, 1000) {
-                    public void onTick(long millisUntilFinished) {
-                        countdownText.setText(String.valueOf(millisUntilFinished / 1000));
-                    }
+                startRound();
 
-                    public void onFinish() {
-                        startMainCountdown();
-                    }
-                }.start();
+            }
+        });
+        restartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               restartRound();
             }
         });
     }
 
-    private void startMainCountdown () {
-        prepareText.setVisibility(View.GONE);
-        mBluetoothGatt.discoverServices();
-        new CountDownTimer(10000, 1000) {
+    private void startRound(){
+        if (mBluetoothGatt == null) {
+            BluetoothDevice device = getIntent().getExtras().getParcelable("btdevice");
+            if (device != null) {
+                mBluetoothGatt = device.connectGatt(MainActivity.this, false, mBtGattCallback);
+            } else {
+                Log.e("MainActivity", "Bluetooth Device not available");
+                return;
+            }
+        }
+
+        startButton.setVisibility(View.GONE);
+        startButton.setEnabled(false);
+        restartButton.setVisibility(View.VISIBLE);
+        restartButton.setEnabled(true);
+        prepareText.setVisibility(View.VISIBLE);
+        countdownText.setVisibility(View.VISIBLE);
+
+        if (preparationCountDownTimer != null) {
+            preparationCountDownTimer.cancel();
+        }
+        preparationCountDownTimer = new CountDownTimer(3500, 1000) {
             public void onTick(long millisUntilFinished) {
                 countdownText.setText(String.valueOf(millisUntilFinished / 1000));
             }
 
             public void onFinish() {
-                countdownText.setText("Done");
-                mBluetoothGatt.close();
+                startMainCountdown();
+            }
+        }.start();
+    }
+
+    private void startMainCountdown () {
+        mBluetoothGatt.discoverServices();
+        prepareText.setVisibility(View.GONE);
+        if (mainCountDownTimer != null) {
+            mainCountDownTimer.cancel(); // Cancel existing timer if it exists
+        }
+        mainCountDownTimer = new CountDownTimer(10000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                countdownText.setText(String.valueOf(millisUntilFinished / 1000));
+            }
+
+            public void onFinish() {
+                if (mBluetoothGatt != null) {
+                    mBluetoothGatt.close();
+                    mBluetoothGatt = null;
+                }
+                countdownText.setVisibility(View.GONE);
+                finishedText.setVisibility(View.VISIBLE);
+                restartButton.setVisibility(View.VISIBLE);
             }
         }.start();
 
+    }
+
+    private void restartRound(){
+        if (mBluetoothGatt != null) {
+            mBluetoothGatt.close();
+            mBluetoothGatt = null;
+        }
+        if (preparationCountDownTimer != null) {
+            preparationCountDownTimer.cancel();
+        }
+        if (mainCountDownTimer != null) {
+            mainCountDownTimer.cancel();
+        }
+
+        prepareText.setVisibility(View.GONE);
+        countdownText.setVisibility(View.GONE);
+        finishedText.setVisibility(View.GONE);
+        restartButton.setVisibility((View.GONE));
+        restartButton.setEnabled(false);
+        startButton.setVisibility(View.VISIBLE);
+        startButton.setEnabled(true);
     }
 
     private final BluetoothGattCallback mBtGattCallback = new BluetoothGattCallback() {
