@@ -35,7 +35,10 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+
     private Button startButton;
+
+    private TextView prepareText;
     private TextView countdownText;
     private SendApi sendApi;
 
@@ -48,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-
+        prepareText = findViewById(R.id.prepareText);
         startButton = findViewById(R.id.startButton);
-        countdownText = findViewById(R.id.countDownTimer); // Make sure you have a TextView in your layout for the countdown
+        countdownText = findViewById(R.id.countDownTimer);
         batch = new ArrayList<>();
 
         RetrofitService retrofitService = new RetrofitService();
@@ -65,23 +68,35 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Make the button disappear
                 startButton.setVisibility(View.GONE);
-                mBluetoothGatt.discoverServices();
-
-                // Start a countdown of 15 seconds, for example
-                new CountDownTimer(15000, 1000) {
+                prepareText.setVisibility(View.VISIBLE);
+                new CountDownTimer(3000, 1000) {
                     public void onTick(long millisUntilFinished) {
-                        // Update a TextView to show the countdown
                         countdownText.setText(String.valueOf(millisUntilFinished / 1000));
                     }
 
                     public void onFinish() {
-                        countdownText.setText("Done");
+                        startMainCountdown();
                     }
                 }.start();
             }
         });
+    }
+
+    private void startMainCountdown () {
+        prepareText.setVisibility(View.GONE);
+        mBluetoothGatt.discoverServices();
+        new CountDownTimer(10000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                countdownText.setText(String.valueOf(millisUntilFinished / 1000));
+            }
+
+            public void onFinish() {
+                countdownText.setText("Done");
+                mBluetoothGatt.close();
+            }
+        }.start();
+
     }
 
     private final BluetoothGattCallback mBtGattCallback = new BluetoothGattCallback() {
@@ -221,22 +236,5 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
-    public static int byteArrayToIntBigEndian(byte[] byteArray) {
-        if (byteArray.length < 4) {
-            throw new IllegalArgumentException("Byte array too short!");
-        }
-        return ByteBuffer.wrap(byteArray)
-                .order(ByteOrder.BIG_ENDIAN)
-                .getInt();
-    }
-
-    public static int byteArrayToIntLittleEndian(byte[] byteArray) {
-        if (byteArray.length < 4) {
-            throw new IllegalArgumentException("Byte array too short!");
-        }
-        return ByteBuffer.wrap(byteArray)
-                .order(ByteOrder.LITTLE_ENDIAN)
-                .getInt();
-    }
 
 }

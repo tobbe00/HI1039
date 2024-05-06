@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
             public void run() {
                 //Background work
                 try {
-                    URL myUrl = new URL("http://130.229.137.214:8080");
+                    URL myUrl = new URL("http://192.168.10.124:8080");
                     URLConnection connection = myUrl.openConnection();
                     connection.setConnectTimeout(1000);
                     connection.connect();
