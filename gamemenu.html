@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>PRODJECT CPR website</title>
+    <link rel="stylesheet" href="gamemenystyle.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar__container">
+            <a href="/test5/index.html" id="navbar__logo">PROJECT CPR</a>
+            <div class="navbar__toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="navbar__menu">
+                <li class="navbar__item">
+                    <a href="/test5/index.html" class="navbar__links">Home</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="/test5/game.html" class="navbar__links">Game</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="/test5/info.html" class="navbar__links">
+                        Stats
+                    </a>
+                </li>
+                <li class="navbar__btn">
+                    <a href="/test5/login.html" class="button">
+                        sign up
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!--here comes the game menu section-->
+        <div class="main">
+            <div class="game-selection">
+                <h2>Game Selection</h2>
+                <div class="input-fields">
+                    <div class="input-field">
+                        <label for="zero-point">Zero Point:</label>
+                        <input type="number" id="zero-point" placeholder="Enter zero point(650)">
+                    </div>
+                    <div class="input-field">
+                        <label for="mode">Mode:</label>
+                        <select id="mode">
+                            <option value="normal">Normal</option>
+                            <option value="child">Child</option>
+                            <option value="elderly">Elderly</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="btnStart-game">Start Game</button>
+            </div>
+        </div>
+      
+
+
+        <script src="scriptgamemeny.js"></script>
+</body>
+</html>

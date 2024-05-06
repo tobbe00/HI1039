@@ -69,7 +69,7 @@ function component(speed, width, height, color, x, y, type) {
     }
     this.newPos = function() {
         this.x += this.speedX;
-        this.y += this.speedY;        
+        this.y +=this.speedY;        
     }
 }
 
@@ -122,6 +122,8 @@ function everyinterval(n) {
         .then(data => {
             // Process the data
             console.log(data);
+            
+          
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
