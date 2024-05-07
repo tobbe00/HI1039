@@ -14,4 +14,7 @@ public class ExtremePointDTO {
     private int minPressure;
     private int id;
     private boolean maxBeforeMin;
+    private double frequency;
+    private int pointsMax;
+    private int pointsMin;
 }

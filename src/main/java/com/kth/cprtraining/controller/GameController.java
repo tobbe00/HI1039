@@ -2,6 +2,7 @@ package com.kth.cprtraining.controller;
 
 import com.kth.cprtraining.dto.ExtremePointDTO;
 
+import com.kth.cprtraining.dto.ZeroPoint;
 import com.kth.cprtraining.model.Batch;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,9 @@ import java.util.List;
 public class GameController {
     int i=0;
     List<Integer> theGameList =new ArrayList<>();
+    List<Integer> pointsList=new ArrayList<>();
     ExtremePointDTO mostRecentExtremePoints=new ExtremePointDTO();
+    int zeroPoint;
 
     @GetMapping("/extreme")//by id
     public ExtremePointDTO sendExtreme(){
@@ -30,6 +33,10 @@ public class GameController {
 
         return mostRecentExtremePoints;
     }
+
+
+
+
     int batchCount=0;
     @PostMapping(path="/send")
     public ResponseEntity<List<Integer>> send(@RequestBody List<Integer> batch){
@@ -55,13 +62,41 @@ public class GameController {
         mostRecentExtremePoints.setMaxPressure(getMax(b));
         mostRecentExtremePoints.setMinPressure(getMin(b));
         mostRecentExtremePoints.setMaxBeforeMin(isMaxBeforeMin(b));
+        mostRecentExtremePoints.setFrequency(getFrequency());
+        mostRecentExtremePoints.setPointsMax(calculatePoints(mostRecentExtremePoints.getFrequency()));
+        mostRecentExtremePoints.setPointsMin(calculatePoints(mostRecentExtremePoints.getFrequency()));
         batchCount++;
         return new ResponseEntity<>(batch,HttpStatus.CREATED);
     }
 
+
+
+
+    @PostMapping(path="/zeropoint")
+    public ResponseEntity<Boolean> getZeroPoint(@RequestBody ZeroPoint zero){
+        zeroPoint=zero.getZeroPointInt();
+        System.out.println(zero);
+        System.out.println(zeroPoint+" the mode is:"+zero.getMode());
+        return new ResponseEntity<>(true,HttpStatus.CREATED);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     //hjälp metoder
     public Batch handleBatch(Batch batch){
-        int displace=650;
+        int displace=zeroPoint;
         for (int j = 0; j < 5; j++) {
             batch.setTheBatchATIndex(displace-batch.getBatchIntAtID(j),j);
         }
@@ -99,5 +134,77 @@ public class GameController {
         }
         return maxIndex>minIndex;
     }
+    public double getFrequency(){
+        //3sec ger 3*20=60
+        int current;
+        int old=0;
+        int next;
+        int peakCount=0;
 
+        if (theGameList.size()<60)return 0;
+        for (int j = theGameList.size()-60; j <theGameList.size() ; j++) {
+            current=theGameList.get(j);
+            if (j==theGameList.size()-60){
+                old=current;
+            }
+            next=theGameList.get(j+1);
+            if (current>=200){//200 får bli minsta gränsen
+                if (old<current&&current>next){
+                    peakCount++;
+                }
+            }
+        }
+        return peakCount/(3.0/60.0);
+    }
+
+    private int calculatePoints( double currentFrequency ) {
+
+        int minRequiredBpm=100;
+        int maxRequiredBpm=120;
+        if (minRequiredBpm<=currentFrequency&&maxRequiredBpm>=currentFrequency){
+            return calculatePointsByTime(5);
+        }else if(minRequiredBpm-3<=currentFrequency&&maxRequiredBpm+3>=currentFrequency){
+            return calculatePointsByTime(4);
+        }else if(minRequiredBpm-6<=currentFrequency&&maxRequiredBpm+6>=currentFrequency){
+            return calculatePointsByTime(3);
+        }else if(minRequiredBpm-9<=currentFrequency&&maxRequiredBpm+9>=currentFrequency){
+            return calculatePointsByTime(2);
+        }else{
+            return calculatePointsByTime(1);
+        }
+    }
+    private int calculatePointsByTime(int multiplyer){
+        int points=0;
+        if (theGameList.size()<1200/4){
+            points+=calculatePointsByPressureMax(multiplyer,1,400,900);
+            points+=calculatePointsByPressureMin(multiplyer,1,200);
+        } else if (theGameList.size()<(1200/4)*2) {
+            points+=calculatePointsByPressureMax(multiplyer,2,450,850);
+            points+=calculatePointsByPressureMin(multiplyer,1,150);
+        } else if (theGameList.size()<(1200/4)*3) {
+            points+=calculatePointsByPressureMax(multiplyer,3,500,800);
+            points+=calculatePointsByPressureMin(multiplyer,1,100);
+        }else {
+            points+=calculatePointsByPressureMax(multiplyer,4,600,700);
+            points+=calculatePointsByPressureMin(multiplyer,1,50);
+        }
+        return points;
+    }
+    private int calculatePointsByPressureMax(int multiplyer,int multiplyer2,int minAllowed,int maxAllowed){
+        int pressure=mostRecentExtremePoints.getMaxPressure();
+        if (pressure<maxAllowed&&pressure>minAllowed){
+            return 5*multiplyer*multiplyer2;
+        }else {
+            return 0;
+        }
+    }
+    private int calculatePointsByPressureMin(int multiplyer,int multiplyer2,int maxAllowed){
+        int pressure=mostRecentExtremePoints.getMinPressure();
+        //int maxAllowed=100;
+        if (pressure<maxAllowed){
+            return 5*multiplyer*multiplyer2;
+        }else {
+            return 0;
+        }
+    }
 }
