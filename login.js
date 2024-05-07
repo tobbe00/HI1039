@@ -72,6 +72,7 @@ enterBtn.onclick=function(){
                 //console.log(response.statusText);
                 //console.log('User registered successfully');
                 storeLoggedIn();
+                popUp();
                 //sessionStorage.setItem("email", email.value);
                 //sessionStorage.setItem("isLoggedIn", true);
                 // Redirect or perform any other actions as needed
@@ -131,6 +132,7 @@ enterBtn.onclick=function(){
                 if (data.success) {
                    
                     storeLoggedIn();
+                    popUp();
                 }
             })
             .catch(error => {
@@ -152,7 +154,14 @@ enterBtn.onclick=function(){
     }
 
 }
-
+//pop up som visar att man e inloggad
+function popUp(){
+    navbarBtn.innerHTML = "<a href='/test5/login.html' class='button'>signed in</a>"
+    const confirmed = window.confirm('You are logged in.');
+    if (confirmed) {
+        location.reload();
+    }
+}
 //sparar till seccion datat att man är inloggat och med vilken mail
 function storeLoggedIn(){
     

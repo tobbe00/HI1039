@@ -33,6 +33,16 @@ let difficulty = difficultySelect.options[difficultySelect.selectedIndex].value;
 // Example usage
 console.log('Zero Point:', zeroPoint);
 console.log('Mode:', difficulty);
+if(!sessionStorage.getItem("isLoggedIn")){
+    const confirmed = window.confirm('You need to log in first. Press OK to go to the login page.');
+
+    // If the user confirms, redirect to the login page
+    if (confirmed) {
+        window.location.href = '/test5/login.html'; // Replace '/login' with your login page URL
+    }
+   
+}
+    
 
 // Add your logic here based on the retrieved values
 let data = {
@@ -51,6 +61,18 @@ fetch('http://localhost:8080/game/zeropoint', {
 .then(response => {
     // Handle the response
     console.log('Response:', response);
+    sessionStorage.setItem("zeroPoint",zeroPoint);
+    sessionStorage.setItem("mode",difficulty);
+   
+    if(response.ok){
+        // Navigate to a new page
+        window.location.href = "/test5/game.html";
+
+    }else{
+        const confirmed = window.confirm('Something went wrong! try again, maybe the server is not working?');
+    }
+
+
 })
 .catch(error => {
     // Handle errors
