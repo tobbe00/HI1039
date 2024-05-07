@@ -14,13 +14,17 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cpr.Model.Round;
+import com.example.cpr.Model.User;
+import com.example.cpr.retrofit.LoginApi;
 import com.example.cpr.retrofit.RetrofitService;
 import com.example.cpr.retrofit.RoundApi;
+import com.google.common.hash.Hashing;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.Statement;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -31,12 +35,17 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
+
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText editTextUsername, editTextPassword;
     private TextView connectionView;
 
     private Button buttonLogin,buttonTest, buttonAddRound;
+
+    String salt="";
+    String hashedPassword="";
 
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
@@ -49,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // Initialize UI elements
-        editTextUsername = findViewById(R.id.editTextUsername);
+        editTextUsername = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
         buttonLogin = findViewById(R.id.buttonLogin);
         buttonTest = findViewById(R.id.testButton);
@@ -58,17 +67,66 @@ public class LoginActivity extends AppCompatActivity {
 
         RetrofitService retrofitService = new RetrofitService();
         RoundApi roundApi = retrofitService.getRetrofit().create(RoundApi.class);
+        LoginApi loginApi = retrofitService.getRetrofit().create(LoginApi.class);
 
         // Set a click listener for the login button
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Retrieve entered username and password
-                String username = editTextUsername.getText().toString();
+                String email = editTextUsername.getText().toString();
                 String password = editTextPassword.getText().toString();
 
+
+                loginApi.getSalt(email).enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        //salt = response.body();
+                        if (response.body() != null) {
+                            JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
+                            salt = jsonObject.get("salt").getAsString();
+
+                            hashedPassword = Hashing.sha256()
+                                    .hashString(password + salt, StandardCharsets.UTF_8)
+                                    .toString();
+                            // Log.d("test1",hashedPassword);
+
+                            //Log.d("test1", "got response+ "+salt);
+
+                            loginApi.login(new User(email, hashedPassword)).enqueue(new Callback<String>() {
+                                @Override
+                                public void onResponse(Call<String> call, Response<String> response) {
+
+                                    JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
+                                    String success = jsonObject.get("success").getAsString();
+
+                                    if (success.equals("true")) {
+                                        Log.d("test1", "Successfully logged in");
+                                        Intent intent = new Intent(LoginActivity.this, BluetoothActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<String> call, Throwable t) {
+
+                                    Log.d("test1", "login failed");
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.d("test1", "failed");
+                    }
+                });
+
+
                 // Implement authentication logic here
-                if (username.equals("Admin") && password.equals("123")) {
+                if (email.equals("Admin") && password.equals("123")) {
                     // Successful login
                     Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
                     //saveLoginState(true);
@@ -156,4 +214,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
 }
