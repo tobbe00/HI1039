@@ -31,6 +31,7 @@ public class GameController {
         //mostRecentExtreme.setId(i);
         i++;
 
+
         return mostRecentExtremePoints;
     }
 
@@ -66,7 +67,6 @@ public class GameController {
         mostRecentExtremePoints.setPointsMax(calculatePoints(mostRecentExtremePoints.getFrequency()));
         mostRecentExtremePoints.setPointsMin(calculatePoints(mostRecentExtremePoints.getFrequency()));
         batchCount++;
-
         return new ResponseEntity<>(batch,HttpStatus.CREATED);
     }
 
@@ -80,6 +80,18 @@ public class GameController {
         System.out.println(zeroPoint+" the mode is:"+zero.getMode());
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -130,10 +142,10 @@ public class GameController {
         int next;
         int peakCount=0;
 
-        if (theGameList.size()<=60)return 0;
-        for (int j = theGameList.size()-60; j <theGameList.size() ; j++) {
+        if (theGameList.size()<60)return 0;
+        for (int j = theGameList.size()-61; j <theGameList.size() ; j++) {
             current=theGameList.get(j);
-            if (j==theGameList.size()-60){
+            if (j==theGameList.size()-61){
                 old=current;
             }
             next=theGameList.get(j+1);
