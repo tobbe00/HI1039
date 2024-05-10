@@ -18,6 +18,11 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
 var myGamePiece;
 var myBackGround;
 var myTrail = [];
+var greenZone = [];
+var greenZoneLower = [];
+var currentGreenZone = -1;
+var currentGreenZoneLower = -1;
+var newYScale= 100, newY = 25;
 var testNumbers = [650, 100, 625, 50, 640, 250, 650, 350];
 var currentNum = 0;
 
@@ -25,13 +30,15 @@ var currentNum = 0;
 function startGame() {
     myGamePiece = new component(0, 16, 16, "gameImages/smiley.gif", 380, 300, "image");
     myBackGround = new component(-1447/6000, 1500,400, "gameImages/graphbackground2.png", 0,0, "image");
+    greenZone.push(new component(-1447/6000, 740, 100, "gameImages/greenSquare.png", 0, 25, "image"));
+    greenZoneLower.push(new component(-1447/6000, 740, 100, "gameImages/greenSquare.png", 0, 350, "image"));
     myGameArea.start();
 }
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = 760;
+        this.canvas.width = 740;
         this.canvas.height = 400;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[10]);
@@ -99,9 +106,24 @@ function updateGameArea() {
         y = myGamePiece.y;
         myTrail.push(new component(-1447/6000, 10, 10, "gameImages/redTrail.png", x, y, "image"));
     }
-    for (i = 0; i < myTrail.length; i += 1) {
-        myTrail[i].newPos();
-        myTrail[i].update();
+    
+
+    if (myGameArea.frameNo == 1 || everyinterval(1500)) {
+        currentGreenZone += 1;
+        newYScale -= 20;
+        newY += 10;
+        greenZone.push(new component(-1447/6000, 361.75, newYScale, "gameImages/greenSquare.png", 740, newY, "image"));
+    }
+    if (myGameArea.frameNo == 1 || everyinterval(1500)) {
+        currentGreenZoneLower += 1;
+        greenZone.push(new component(-1447/6000, 361.75, 100, "gameImages/greenSquare.png", 740, newY + 325, "image"));
+    }
+
+    if(testNumbers[currentNum] / 1.8 > greenZone[currentGreenZone].y && testNumbers[currentNum] / 1.8 < greenZone[currentGreenZone].y + greenZone[currentGreenZone].height){
+        //If sats som kollar om bollen är i den övre grön zonen
+    }
+    if(testNumbers[currentGreenZone] /1.8 > greenZoneLower[currentGreenZoneLower].y){
+        //If sats som kollar om boller är i den undre grön zonen
     }
 
     if(myGamePiece.y > testNumbers[currentNum] / 1.8){
@@ -120,6 +142,21 @@ function updateGameArea() {
     }
     if(currentNum >= testNumbers.length){
         currentNum = 0;
+    }
+
+    
+    //Alla position updates
+    for (i = 0; i < greenZone.length; i += 1) {
+        greenZone[i].newPos();
+        greenZone[i].update();
+    }
+    for (i = 0; i < greenZoneLower.length; i += 1) {
+        greenZoneLower[i].newPos();
+        greenZoneLower[i].update();
+    }
+    for (i = 0; i < myTrail.length; i += 1) {
+        myTrail[i].newPos();
+        myTrail[i].update();
     }
 
     myGamePiece.newPos();
