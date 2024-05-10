@@ -23,6 +23,8 @@ public class GameController {
     List<Integer> pointsList=new ArrayList<>();
     ExtremePointDTO mostRecentExtremePoints=new ExtremePointDTO();
     int zeroPoint;
+    boolean gameStart=false;
+    boolean gameEnd=false;
 
     @GetMapping("/extreme")//by id
     public ExtremePointDTO sendExtreme(){
@@ -81,7 +83,22 @@ public class GameController {
         System.out.println(zeroPoint+" the mode is:"+zero.getMode());
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
-
+    @PostMapping("/gamestart")
+    public ResponseEntity<Boolean> gameStart(@RequestBody boolean gameHasStarted){
+        if (gameHasStarted){
+            emptyGameList();
+        }
+        gameStart=gameHasStarted;
+        return new ResponseEntity<>(true,HttpStatus.CREATED);
+    }
+    @PostMapping("/gameEnd")
+    public ResponseEntity<Boolean> recivedGameEnd(@RequestBody boolean gameHasEnded){
+        if (gameHasEnded){
+            emptyGameList();
+        }
+        gameEnd=gameHasEnded;
+        return new ResponseEntity<>(true,HttpStatus.CREATED);
+    }
 
 
 
@@ -97,6 +114,12 @@ public class GameController {
 
 
     //hjälp metoder
+    public void emptyGameList(){
+        for (int j = theGameList.size()-1; j < theGameList.size(); j--) {
+            theGameList.remove(j);
+        }
+        i=0;
+    }
     public Batch handleBatch(Batch batch){
         int displace=zeroPoint;
         for (int j = 0; j < 5; j++) {
