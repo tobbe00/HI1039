@@ -17,4 +17,8 @@ public class ZeroPoint {
     public int getZeroPointInt() {
         return zero;
     }
+
+    public int getAvg() {
+        return avg;
+    }
 }
