@@ -53,7 +53,7 @@ public class GameController {
             b.setTheBatchATIndex(batch.get(j),j);//gör om till batch från listan vi tar in
         }
 
-        b= handleBatch(b);//gör om till att 0 inte e 650
+        //b= handleBatch(b);//gör om till att 0 inte e 650
 
         //theGameList.addAll(batch);
         for (int a:b.getTheBatch()) {
@@ -63,10 +63,10 @@ public class GameController {
         mostRecentExtremePoints.setMaxPressure(getMax(b));
         mostRecentExtremePoints.setMinPressure(getMin(b));
         mostRecentExtremePoints.setMaxBeforeMin(isMaxBeforeMin(b));
-        mostRecentExtremePoints.setFrequency(getFrequency());
+        /*mostRecentExtremePoints.setFrequency(getFrequency());
         mostRecentExtremePoints.setPointsMax(calculatePoints(mostRecentExtremePoints.getFrequency()));
         mostRecentExtremePoints.setPointsMin(calculatePoints(mostRecentExtremePoints.getFrequency()));
-        batchCount++;
+        */batchCount++;
         return new ResponseEntity<>(batch,HttpStatus.CREATED);
     }
 
@@ -142,8 +142,8 @@ public class GameController {
         int next;
         int peakCount=0;
 
-        if (theGameList.size()<60)return 0;
-        for (int j = theGameList.size()-61; j <theGameList.size() ; j++) {
+        if (theGameList.size()<=60)return 0;
+        for (int j = theGameList.size()-61; j <theGameList.size() - 1 ; j++) {
             current=theGameList.get(j);
             if (j==theGameList.size()-61){
                 old=current;
