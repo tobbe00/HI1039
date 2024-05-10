@@ -23,7 +23,7 @@ var greenZoneLower = [];
 var currentGreenZone = -1;
 var currentGreenZoneLower = -1;
 var newYScale= 100, newY = 25;
-var testNumbers = [650, 100, 625, 50, 640, 250, 650, 350];
+var testNumbers = [];
 var currentNum = 0;
 
 
@@ -126,14 +126,14 @@ function updateGameArea() {
         //If sats som kollar om boller är i den undre grön zonen
     }
 
-    if(myGamePiece.y > testNumbers[currentNum] / 1.8){
+    if(myGamePiece.y > testNumbers[currentNum]){
         if(myGamePiece.speedY > 0)
         {
             currentNum += 1;
         }
         myGamePiece.speedY = -5;
     }
-    if(myGamePiece.y < testNumbers[currentNum] / 1.8){
+    if(myGamePiece.y < testNumbers[currentNum]){
         if(myGamePiece.speedY < 0)
         {
             currentNum += 1;
@@ -159,6 +159,7 @@ function updateGameArea() {
         myTrail[i].update();
     }
 
+    drawText(`Y: ${Math.round(myGamePiece.y)}`, 10, 20, 'blue', '14px');
     myGamePiece.newPos();
     myGamePiece.update();   
 }
