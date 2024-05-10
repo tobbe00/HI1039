@@ -46,6 +46,7 @@ public class GameController {
         if (theGameList.size()==1200){
             //saveGame(); lagg metod för att spara
         }
+
         Batch b=new Batch();
         b.setBatchID(batchCount);
 
@@ -99,7 +100,7 @@ public class GameController {
     public Batch handleBatch(Batch batch){
         int displace=zeroPoint;
         for (int j = 0; j < 5; j++) {
-            batch.setTheBatchATIndex(displace-batch.getBatchIntAtID(j),j);
+            batch.setTheBatchATIndex(Math.abs(displace-batch.getBatchIntAtID(j)),j);
         }
         return batch;
     }
@@ -143,7 +144,7 @@ public class GameController {
         int peakCount=0;
 
         if (theGameList.size()<60)return 0;
-        for (int j = theGameList.size()-61; j <theGameList.size() ; j++) {
+        for (int j = theGameList.size()-61; j <theGameList.size()-1 ; j++) {
             current=theGameList.get(j);
             if (j==theGameList.size()-61){
                 old=current;
