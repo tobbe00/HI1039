@@ -13,6 +13,7 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
     //signedIn.innerHTML="signed in";
     navbarBtn.innerHTML = "<a href='/test5/signOut.html' class='button'>sign out</a>"
 }
+let zeroPoint = parseInt(sessionStorage.getItem("zeroPoint"));
 //page specific!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 var myGamePiece;
@@ -28,7 +29,7 @@ var currentNum = 0;
 
 
 function startGame() {
-    myGamePiece = new component(0, 16, 16, "gameImages/smiley.gif", 380, 300, "image");
+    myGamePiece = new component(0, 16, 16, "gameImages/smiley.gif", 380, zeroPoint, "image");
     myBackGround = new component(-1447/6000, 1500,400, "gameImages/graphbackground2.png", 0,0, "image");
     greenZone.push(new component(-1447/6000, 740, 100, "gameImages/greenSquare.png", 0, 25, "image"));
     greenZoneLower.push(new component(-1447/6000, 740, 100, "gameImages/greenSquare.png", 0, 350, "image"));
@@ -39,7 +40,7 @@ var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
         this.canvas.width = 740;
-        this.canvas.height = 400;
+        this.canvas.height = 1000;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[10]);
         this.frameNo = 0;
@@ -92,7 +93,14 @@ function moveup() {
 function movedown() {
     myGamePiece.speedY += 1/2; 
 }
-
+function drawText(text, x, y, color = 'black', fontSize = '16px', font = 'Arial') {
+    var ctx = myGameArea.context;
+    ctx.save();
+    ctx.font = `${fontSize} ${font}`;
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
+    ctx.restore();
+}
 
 function updateGameArea() {
     var x, y;
@@ -119,14 +127,14 @@ function updateGameArea() {
         greenZone.push(new component(-1447/6000, 361.75, 100, "gameImages/greenSquare.png", 740, newY + 325, "image"));
     }
 
-    if(testNumbers[currentNum] / 1.8 > greenZone[currentGreenZone].y && testNumbers[currentNum] / 1.8 < greenZone[currentGreenZone].y + greenZone[currentGreenZone].height){
+    /*if(testNumbers[currentNum] / 1.8 > greenZone[currentGreenZone].y && testNumbers[currentNum] / 1.8 < greenZone[currentGreenZone].y + greenZone[currentGreenZone].height){
         //If sats som kollar om bollen är i den övre grön zonen
     }
     if(testNumbers[currentGreenZone] /1.8 > greenZoneLower[currentGreenZoneLower].y){
         //If sats som kollar om boller är i den undre grön zonen
     }
 
-    if(myGamePiece.y > testNumbers[currentNum]){
+    /*if(myGamePiece.y > testNumbers[currentNum]){
         if(myGamePiece.speedY > 0)
         {
             currentNum += 1;
@@ -142,7 +150,11 @@ function updateGameArea() {
     }
     if(currentNum >= testNumbers.length){
         currentNum = 0;
-    }
+    }*/
+
+    myGamePiece.y = zeroPoint - testNumbers[currentNum];
+   
+    
 
     
     //Alla position updates
@@ -194,6 +206,7 @@ let oldId=10;
                 }
             }
             oldId=data.id;
+            currentNum = data.id;
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
