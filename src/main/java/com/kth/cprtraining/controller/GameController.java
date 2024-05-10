@@ -23,6 +23,7 @@ public class GameController {
     List<Integer> pointsList=new ArrayList<>();
     ExtremePointDTO mostRecentExtremePoints=new ExtremePointDTO();
     int zeroPoint;
+    int avgPressure;
     boolean gameStart=false;
     boolean gameEnd=false;
 
@@ -79,6 +80,7 @@ public class GameController {
     @PostMapping(path="/zeropoint")
     public ResponseEntity<Boolean> getZeroPoint(@RequestBody ZeroPoint zero){
         zeroPoint=zero.getZeroPointInt();
+        avgPressure=zero.getAvg();
         System.out.println(zero);
         System.out.println(zeroPoint+" the mode is:"+zero.getMode());
         return new ResponseEntity<>(true,HttpStatus.CREATED);
@@ -93,6 +95,7 @@ public class GameController {
     }
     @PostMapping("/gameEnd")
     public ResponseEntity<Boolean> recivedGameEnd(@RequestBody boolean gameHasEnded){
+        //remember to save thegamelist om vi ska ha den i databasen
         if (gameHasEnded){
             emptyGameList();
         }
@@ -200,17 +203,19 @@ public class GameController {
     }
     private int calculatePointsByTime(int multiplyer){
         int points=0;
+        int diff=200;
+        int changePerTime=50;
         if (theGameList.size()<1200/4){
-            points+=calculatePointsByPressureMax(multiplyer,1,400,900);
+            points+=calculatePointsByPressureMax(multiplyer,1,avgPressure-diff,avgPressure+diff);
             points+=calculatePointsByPressureMin(multiplyer,1,200);
         } else if (theGameList.size()<(1200/4)*2) {
-            points+=calculatePointsByPressureMax(multiplyer,2,450,850);
+            points+=calculatePointsByPressureMax(multiplyer,2,avgPressure-diff+changePerTime,avgPressure+diff-changePerTime);
             points+=calculatePointsByPressureMin(multiplyer,1,150);
         } else if (theGameList.size()<(1200/4)*3) {
-            points+=calculatePointsByPressureMax(multiplyer,3,500,800);
+            points+=calculatePointsByPressureMax(multiplyer,3,avgPressure-diff+changePerTime*2,avgPressure+diff-changePerTime*2);
             points+=calculatePointsByPressureMin(multiplyer,1,100);
         }else {
-            points+=calculatePointsByPressureMax(multiplyer,4,600,700);
+            points+=calculatePointsByPressureMax(multiplyer,4,avgPressure-diff+changePerTime*3,avgPressure+diff-changePerTime*3);
             points+=calculatePointsByPressureMin(multiplyer,1,50);
         }
         return points;

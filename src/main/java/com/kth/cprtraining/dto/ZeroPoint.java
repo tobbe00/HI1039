@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class ZeroPoint {
     int zero;
     String mode;
+    int avg;
 
     public int getZeroPointInt() {
         return zero;
