@@ -114,12 +114,14 @@ public class GameController {
     }
 
     @PostMapping("/gameEnd")
-    public ResponseEntity<Boolean> recivedGameEnd(@RequestBody boolean gameHasEnded){
+    public ResponseEntity<Boolean> recivedGameEnd(@RequestBody String gameHasEnded){
+        
+        boolean ended = Boolean.parseBoolean(gameHasEnded);
         //remember to save thegamelist om vi ska ha den i databasen
-        if (gameHasEnded){
+        if (ended){
             emptyGameList();
         }
-        gameEnd=gameHasEnded;
+        gameEnd=ended;
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
 
