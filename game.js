@@ -27,6 +27,7 @@ var currentGreenZoneLower = -1;
 var newYScale= 100, newY = 25;
 var testNumbers = [];
 var currentNum = 0;
+var gameStarted = false;
 
 
 function startGame() {
@@ -114,76 +115,115 @@ function printEvaluationMessageTop(){
 
 function updateGameArea() {
     var x, y;
-    myGameArea.clear();
-    myBackGround.update();
-    myBackGround.newPos();
-    
-    myGameArea.frameNo += 1;
-    if (myGameArea.frameNo == 1 || everyinterval(1)) {
-        x = myGamePiece.x;
-        y = myGamePiece.y;
-        myTrail.push(new component(-1447/6000, 10, 10, "gameImages/redTrail.png", x, y, "image"));
-    }
     
 
-    if (myGameArea.frameNo == 1 || everyinterval(1500)) {
-        currentGreenZone += 1;
-        newYScale -= 20;
-        newY += 10;
-        greenZone.push(new component(-1447/6000, 361.75, newYScale, "gameImages/greenSquare.png", 740, newY, "image"));
-    }
-    if (myGameArea.frameNo == 1 || everyinterval(1500)) {
-        currentGreenZoneLower += 1;
-        greenZone.push(new component(-1447/6000, 361.75, 100, "gameImages/greenSquare.png", 740, newY + 325, "image"));
-    }
+    if (gameStarted) {
 
-    /*if(testNumbers[currentNum] / 1.8 > greenZone[currentGreenZone].y && testNumbers[currentNum] / 1.8 < greenZone[currentGreenZone].y + greenZone[currentGreenZone].height){
-        //If sats som kollar om bollen är i den övre grön zonen
-    }
-    if(testNumbers[currentGreenZone] /1.8 > greenZoneLower[currentGreenZoneLower].y){
-        //If sats som kollar om boller är i den undre grön zonen
-    }
 
-    /*if(myGamePiece.y > testNumbers[currentNum]){
-        if(myGamePiece.speedY > 0)
-        {
-            currentNum += 1;
+        myBackGround.update();
+        myBackGround.newPos();       
+        myGameArea.clear();
+        
+
+        myGameArea.frameNo += 1;
+        if (myGameArea.frameNo == 1 || everyinterval(1)) {
+            x = myGamePiece.x;
+            y = myGamePiece.y;
+            myTrail.push(new component(-1447 / 6000, 10, 10, "gameImages/redTrail.png", x, y, "image"));
         }
-        myGamePiece.speedY = -5;
-    }
-    if(myGamePiece.y < testNumbers[currentNum]){
-        if(myGamePiece.speedY < 0)
-        {
-            currentNum += 1;
+
+
+        if (myGameArea.frameNo == 1 || everyinterval(1500)) {
+            currentGreenZone += 1;
+            newYScale -= 20;
+            newY += 10;
+            greenZone.push(new component(-1447 / 6000, 361.75, newYScale, "gameImages/greenSquare.png", 740, newY, "image"));
         }
-        myGamePiece.speedY = 5;
-    }
-    if(currentNum >= testNumbers.length){
-        currentNum = 0;
-    }*/
+        if (myGameArea.frameNo == 1 || everyinterval(1500)) {
+            currentGreenZoneLower += 1;
+            greenZone.push(new component(-1447 / 6000, 361.75, 100, "gameImages/greenSquare.png", 740, newY + 325, "image"));
+        }
 
-    myGamePiece.y = zeroPoint - testNumbers[currentNum];
+        /*if(testNumbers[currentNum] / 1.8 > greenZone[currentGreenZone].y && testNumbers[currentNum] / 1.8 < greenZone[currentGreenZone].y + greenZone[currentGreenZone].height){
+            //If sats som kollar om bollen är i den övre grön zonen
+        }
+        if(testNumbers[currentGreenZone] /1.8 > greenZoneLower[currentGreenZoneLower].y){
+            //If sats som kollar om boller är i den undre grön zonen
+        }
     
-    
+        /*if(myGamePiece.y > testNumbers[currentNum]){
+            if(myGamePiece.speedY > 0)
+            {
+                currentNum += 1;
+            }
+            myGamePiece.speedY = -5;
+        }
+        if(myGamePiece.y < testNumbers[currentNum]){
+            if(myGamePiece.speedY < 0)
+            {
+                currentNum += 1;
+            }
+            myGamePiece.speedY = 5;
+        }
+        if(currentNum >= testNumbers.length){
+            currentNum = 0;
+        }*/
 
-    
-    //Alla position updates
-    for (i = 0; i < greenZone.length; i += 1) {
-        greenZone[i].newPos();
-        greenZone[i].update();
-    }
-    for (i = 0; i < greenZoneLower.length; i += 1) {
-        greenZoneLower[i].newPos();
-        greenZoneLower[i].update();
-    }
-    for (i = 0; i < myTrail.length; i += 1) {
-        myTrail[i].newPos();
-        myTrail[i].update();
-    }
+        myGamePiece.y = zeroPoint - testNumbers[currentNum];
 
-    drawText(`Y: ${Math.round(myGamePiece.y)}`, 10, 20, 'blue', '14px');
-    myGamePiece.newPos();
-    myGamePiece.update();   
+
+
+
+        //Alla position updates
+        for (i = 0; i < greenZone.length; i += 1) {
+            greenZone[i].newPos();
+            greenZone[i].update();
+        }
+        for (i = 0; i < greenZoneLower.length; i += 1) {
+            greenZoneLower[i].newPos();
+            greenZoneLower[i].update();
+        }
+        for (i = 0; i < myTrail.length; i += 1) {
+            myTrail[i].newPos();
+            myTrail[i].update();
+        }
+
+        drawText(`Y: ${Math.round(myGamePiece.y)}`, 10, 20, 'blue', '14px');
+        myGamePiece.newPos();
+        myGamePiece.update();
+    }
+    else{
+        myGameArea.frameNo += 1;
+        if (myGameArea.frameNo == 1 || everyinterval(1)) {
+            x = myGamePiece.x;
+            y = myGamePiece.y;
+            myTrail.push(new component(-1447 / 6000, 10, 10, "gameImages/redTrail.png", x, y, "image"));
+        }
+
+        myBackGround.update();
+        myBackGround.newPos();       
+        myGameArea.clear();
+        myGamePiece.speedX=0;
+        myBackGround.speedX=0;       
+        
+        myGameArea.speedX=0;
+        greenZone.speedX=0;
+        greenZoneLower.speedX=0;
+        myGamePiece.newPos();
+        myGamePiece.update();
+        if (myGameArea.frameNo == 1 || everyinterval(1500)) {
+            currentGreenZone += 1;
+            newYScale -= 20;
+            newY += 10;
+            greenZone.push(new component(-1447 / 6000, 361.75, newYScale, "gameImages/greenSquare.png", 740, newY, "image"));
+        }
+        if (myGameArea.frameNo == 1 || everyinterval(1500)) {
+            currentGreenZoneLower += 1;
+            greenZone.push(new component(-1447 / 6000, 361.75, 100, "gameImages/greenSquare.png", 740, newY + 325, "image"));
+        }
+        
+        myGamePiece.y = zeroPoint - testNumbers[currentNum];
+    }
 }
 
 function everyinterval(n) {
@@ -222,6 +262,26 @@ let freq=0;
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
+
+        fetch('http://localhost:8080/game/gamestart')
+        .then(response => {
+           // console.log(response);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            
+             //Process the data
+            gameStarted = data
+            console.log(gameStarted)
+            
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+
 }
 
 // Fetch data every 0.1 seconds 1000=1s

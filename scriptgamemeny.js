@@ -26,7 +26,7 @@ enterButton.onclick=function(){
 // Get the zero point value
 let zeroPoint = document.getElementById('zero-point').value;
 //get the avg value
-let avgValue=document.getElementById("avg-point")
+let avgValue=document.getElementById("avg-point").value;
 
 // Get the difficulty level
 let difficultySelect = document.getElementById('mode');
@@ -82,5 +82,6 @@ fetch('http://localhost:8080/game/zeropoint', {
     // Handle errors
     console.error('Error:', error);
 });
+
 };
 
