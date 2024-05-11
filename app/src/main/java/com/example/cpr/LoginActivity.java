@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
 
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
-    public static String url = "http://130.229.176.41:8080";
+    public static String url = "http://192.168.10.124:8080";
 
 
     @SuppressLint("MissingInflatedId")

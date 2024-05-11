@@ -71,7 +71,7 @@ public class BluetoothActivity extends BaseActivity {
 
                     mBluetoothGatt = device.connectGatt(BluetoothActivity.this, false, mBtGattCallback);
 
-                    if(mBluetoothGatt!=null){
+                    if(mBluetoothGatt!=null && mBluetoothGatt.connect()){
                         Intent intent = new Intent (BluetoothActivity.this, MainActivity.class);
                         intent.putExtra("btdevice", device);
                         startActivity(intent);
