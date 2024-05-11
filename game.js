@@ -109,7 +109,14 @@ function printEvaluationMessageTop(){
     }else{
         evalMessage+="go faster!"
     }
-    
+
+}
+function showFrequency(){
+    drawText("BPM: "+freq,660,20,color="black",fontSize = '20px', font = 'Arial');
+    //drawText(freq,100,80,color="black",fontSize = '20px', font = 'Arial')
+}
+function showTotPoints(){
+    drawText("Total Points: "+totPoints,600,450,color="black",fontSize = '20px', font = 'Arial');
 }
 
 function updateGameArea() {
@@ -182,6 +189,8 @@ function updateGameArea() {
     }
 
     drawText(`Y: ${Math.round(myGamePiece.y)}`, 10, 20, 'blue', '14px');
+    showFrequency();
+    showTotPoints();
     myGamePiece.newPos();
     myGamePiece.update();   
 }
@@ -194,6 +203,9 @@ function everyinterval(n) {
 
 let oldId=10;
 let freq=0;
+let upperPoints=0;
+let lowerPoints=0;
+let totPoints=0;
   function fetchData() {
     fetch('http://localhost:8080/game/extreme')
         .then(response => {
@@ -208,6 +220,8 @@ let freq=0;
             if(oldId != data.id){
                 console.log(data);
                 freq=data.frequency;
+                upperPoints=data.pointsMax;
+                lowerPoints=data.pointsMin;
                 if(data.maxBeforeMin){
                     testNumbers.push(data.maxPressure);
                     testNumbers.push(data.minPressure);

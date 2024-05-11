@@ -66,6 +66,7 @@ fetch('http://localhost:8080/game/zeropoint', {
     // Handle the response
     console.log('Response:', response);
     sessionStorage.setItem("zeroPoint",zeroPoint);
+    sessionStorage.setItem("avg",avgValue);
     sessionStorage.setItem("mode",difficulty);
    
     if(response.ok){
