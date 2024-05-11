@@ -16,6 +16,9 @@ public interface SendApi {
     @POST("/game/gamestart")
     Call<Boolean> sendGameStart(@Body Boolean gameStarted);
 
+    @POST("/game/gameEnd")
+    Call<Boolean> sendGameEnd(@Body Boolean gameEnded);
+
 
 
 }
