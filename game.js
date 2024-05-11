@@ -31,7 +31,7 @@ var currentNum = 0;
 
 function startGame() {
     myGamePiece = new component(0, 16, 16, "gameImages/smiley.gif", 380, zeroPoint, "image");
-    myBackGround = new component(-1447/6000, 1500,400, "gameImages/graphbackground2.png", 0,0, "image");
+    myBackGround = new component(-1447/6000, window.innerWidth,window.innerHeight,"gameImages/graphbackground2.png", 0,0, "image");
     greenZone.push(new component(-1447/6000, 740, 100, "gameImages/greenSquare.png", 0, 25, "image"));
     greenZoneLower.push(new component(-1447/6000, 740, 100, "gameImages/greenSquare.png", 0, 350, "image"));
     myGameArea.start();
@@ -40,8 +40,8 @@ function startGame() {
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = 740;
-        this.canvas.height = 1000;
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[10]);
         this.frameNo = 0;
@@ -222,6 +222,7 @@ let totPoints=0;
                 freq=data.frequency;
                 upperPoints=data.pointsMax;
                 lowerPoints=data.pointsMin;
+                totPoints += upperPoints+lowerPoints;
                 if(data.maxBeforeMin){
                     testNumbers.push(data.maxPressure);
                     testNumbers.push(data.minPressure);
