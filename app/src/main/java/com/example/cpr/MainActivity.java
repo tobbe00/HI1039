@@ -64,7 +64,7 @@ public class MainActivity extends BaseActivity{
         restartButton.setVisibility(View.GONE);
         batch = new ArrayList<>();
 
-        RetrofitService retrofitService = new RetrofitService();
+        RetrofitService retrofitService = new RetrofitService(LoginActivity.url);
 
         sendApi = retrofitService.getRetrofit().create(SendApi.class);
 
@@ -110,6 +110,17 @@ public class MainActivity extends BaseActivity{
             }
 
             public void onFinish() {
+                sendApi.sendGameStart(true).enqueue(new Callback<Boolean>() {
+                    @Override
+                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        Log.d("test1"," response from server");
+                    }
+
+                    @Override
+                    public void onFailure(Call<Boolean> call, Throwable t) {
+
+                    }
+                });
                 startMainCountdown();
             }
         }.start();

@@ -47,8 +47,11 @@ public class LoginActivity extends AppCompatActivity {
     String salt="";
     String hashedPassword="";
 
+    private boolean connected=false;
+
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
+    public static String url = "http://130.229.176.41:8080";
 
 
     @SuppressLint("MissingInflatedId")
@@ -61,12 +64,9 @@ public class LoginActivity extends AppCompatActivity {
         editTextUsername = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
         buttonLogin = findViewById(R.id.buttonLogin);
-        buttonTest = findViewById(R.id.testButton);
         connectionView = findViewById(R.id.connectionText);
-        buttonAddRound = findViewById(R.id.addRoundButton);
 
-        RetrofitService retrofitService = new RetrofitService();
-        RoundApi roundApi = retrofitService.getRetrofit().create(RoundApi.class);
+        RetrofitService retrofitService = new RetrofitService(url);
         LoginApi loginApi = retrofitService.getRetrofit().create(LoginApi.class);
 
         // Set a click listener for the login button
@@ -74,55 +74,63 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Retrieve entered username and password
+                testConnection(url);
+
                 String email = editTextUsername.getText().toString();
                 String password = editTextPassword.getText().toString();
 
 
-                loginApi.getSalt(email).enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        //salt = response.body();
-                        if (response.body() != null) {
-                            JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-                            salt = jsonObject.get("salt").getAsString();
+                    loginApi.getSalt(email).enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            //salt = response.body();
+                            if (response.body() != null) {
+                                JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
+                                salt = jsonObject.get("salt").getAsString();
 
-                            hashedPassword = Hashing.sha256()
-                                    .hashString(password + salt, StandardCharsets.UTF_8)
-                                    .toString();
-                            // Log.d("test1",hashedPassword);
+                                hashedPassword = Hashing.sha256()
+                                        .hashString(password + salt, StandardCharsets.UTF_8)
+                                        .toString();
+                                // Log.d("test1",hashedPassword);
 
-                            //Log.d("test1", "got response+ "+salt);
+                                //Log.d("test1", "got response+ "+salt);
 
-                            loginApi.login(new User(email, hashedPassword)).enqueue(new Callback<String>() {
-                                @Override
-                                public void onResponse(Call<String> call, Response<String> response) {
+                                loginApi.login(new User(email, hashedPassword)).enqueue(new Callback<String>() {
+                                    @Override
+                                    public void onResponse(Call<String> call, Response<String> response) {
 
-                                    JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-                                    String success = jsonObject.get("success").getAsString();
+                                        JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
+                                        String success = jsonObject.get("success").getAsString();
 
-                                    if (success.equals("true")) {
-                                        Log.d("test1", "Successfully logged in");
-                                        Intent intent = new Intent(LoginActivity.this, BluetoothActivity.class);
-                                        startActivity(intent);
-                                        finish();
+                                        if (success.equals("true")) {
+                                            //Log.d("test1", "Successfully logged in");
+                                            Intent intent = new Intent(LoginActivity.this, BluetoothActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void onFailure(Call<String> call, Throwable t) {
+                                    @Override
+                                    public void onFailure(Call<String> call, Throwable t) {
 
-                                    Log.d("test1", "login failed");
+                                        Log.d("test1", "login failed");
 
-                                }
-                            });
+                                    }
+                                });
+                            }
+                            else{
+                                connectionView.setVisibility(View.VISIBLE);
+                                connectionView.setText("Wrong email or password");
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        Log.d("test1", "failed");
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            Log.d("test1", "failed");
+                        }
+                    });
+
+
 
 
                 // Implement authentication logic here
@@ -143,53 +151,19 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        //Ändra url beroende på wifi ip
-            String url = "http://130.229.137.214:8080";
-
-        buttonTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d("test","button works");
-
-                //url som inparameter
-                testConnection("123");
-            }
-        });
-
-        buttonAddRound.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d("test","button works");
-
-                roundApi.save(new Round(500,1))
-                        .enqueue(new Callback<Round>() {
-                            @Override
-                            public void onResponse(Call<Round> call, Response<Round> response) {
-
-                                Log.d("test","Save successful");
-                            }
-
-                            @Override
-                            public void onFailure(Call<Round> call, Throwable t) {
-                                Log.d("test","Save failed");
-                                Logger.getLogger(LoginActivity.class.getName()).log(Level.SEVERE,"error occured");
-                            }
-
-                });
-
-            }
-        });
     }
 
     private void testConnection(String url) {
 
         executor.execute(new Runnable() {
-            boolean connected=false;
+
             @Override
             public void run() {
                 //Background work
                 try {
-                    URL myUrl = new URL("http://192.168.10.124:8080");
+
+                    Log.d("test1",url);
+                    URL myUrl = new URL(url);
                     URLConnection connection = myUrl.openConnection();
                     connection.setConnectTimeout(1000);
                     connection.connect();
@@ -203,11 +177,9 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         //UI Thread work here
-                        connectionView.setVisibility(View.VISIBLE);
-                        if(connected){
-                            connectionView.setText("Connected!");
-                        }else{
-                            connectionView.setText("Not conencted, url might be down");
+                        if(!connected){
+                            connectionView.setVisibility(View.VISIBLE);
+                            connectionView.setText("Failed to login, Server might be down");
                         }
                     }
                 });
