@@ -72,9 +72,9 @@ public class GameController {
         mostRecentExtremePoints.setMaxPressure(getMax(b));
         mostRecentExtremePoints.setMinPressure(getMin(b));
         mostRecentExtremePoints.setMaxBeforeMin(isMaxBeforeMin(b));
-        /* mostRecentExtremePoints.setFrequency(getFrequency());
+        mostRecentExtremePoints.setFrequency(getFrequency());
         mostRecentExtremePoints.setPointsMax(calculatePoints(mostRecentExtremePoints.getFrequency()));
-        mostRecentExtremePoints.setPointsMin(calculatePoints(mostRecentExtremePoints.getFrequency()));*/
+        mostRecentExtremePoints.setPointsMin(calculatePoints(mostRecentExtremePoints.getFrequency()));
         batchCount++;
         return new ResponseEntity<>(batch,HttpStatus.CREATED);
     }
@@ -85,7 +85,7 @@ public class GameController {
     @PostMapping(path="/zeropoint")
     public ResponseEntity<Boolean> getZeroPoint(@RequestBody ZeroPoint zero){
         zeroPoint=zero.getZeroPointInt();
-        //avgPressure=zero.getAvgInt();
+        avgPressure=zero.getAvgInt();
         System.out.println(zero);
         System.out.println(zeroPoint+" the mode is:"+zero.getMode());
         return new ResponseEntity<>(true,HttpStatus.CREATED);
@@ -122,15 +122,6 @@ public class GameController {
         gameEnd=gameHasEnded;
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -209,6 +200,7 @@ public class GameController {
 
         int minRequiredBpm=100;
         int maxRequiredBpm=120;
+        System.out.println("In i calculatePoints");
         if (minRequiredBpm<=currentFrequency&&maxRequiredBpm>=currentFrequency){
             return calculatePointsByTime(5);
         }else if(minRequiredBpm-3<=currentFrequency&&maxRequiredBpm+3>=currentFrequency){
@@ -225,6 +217,7 @@ public class GameController {
         int points=0;
         int diff=200;
         int changePerTime=50;
+        System.out.println("In i calculatePoints by time");
         if (theGameList.size()<1200/4){
             points+=calculatePointsByPressureMax(multiplyer,1,avgPressure-diff,avgPressure+diff);
             points+=calculatePointsByPressureMin(multiplyer,1,200);
@@ -252,8 +245,11 @@ public class GameController {
         int pressure=mostRecentExtremePoints.getMinPressure();
         //int maxAllowed=100;
         if (pressure<maxAllowed){
+            System.out.println("pressure min 5");
             return 5*multiplyer*multiplyer2;
+
         }else {
+            System.out.println("pressure min 0");
             return 0;
         }
     }
