@@ -115,17 +115,15 @@ function printEvaluationMessageTop(){
 
 function updateGameArea() {
     var x, y;
-    
+        
+    myBackGround.update();
+    myGameArea.clear();
 
     if (gameStarted) {
 
-
-        myBackGround.update();
-        myBackGround.newPos();       
-        myGameArea.clear();
-        
-
+        myBackGround.newPos();      
         myGameArea.frameNo += 1;
+
         if (myGameArea.frameNo == 1 || everyinterval(1)) {
             x = myGamePiece.x;
             y = myGamePiece.y;
@@ -193,36 +191,16 @@ function updateGameArea() {
         myGamePiece.update();
     }
     else{
-        myGameArea.frameNo += 1;
-        if (myGameArea.frameNo == 1 || everyinterval(1)) {
-            x = myGamePiece.x;
-            y = myGamePiece.y;
-            myTrail.push(new component(-1447 / 6000, 10, 10, "gameImages/redTrail.png", x, y, "image"));
+       for (i = 0; i < greenZone.length; i += 1) {
+            greenZone[i].update();
         }
-
+        for (i = 0; i < greenZoneLower.length; i += 1) {
+            greenZoneLower[i].update();
+        }
+        for (i = 0; i < myTrail.length; i += 1) {
+            myTrail[i].update();
+        }
         myBackGround.update();
-        myBackGround.newPos();       
-        myGameArea.clear();
-        myGamePiece.speedX=0;
-        myBackGround.speedX=0;       
-        
-        myGameArea.speedX=0;
-        greenZone.speedX=0;
-        greenZoneLower.speedX=0;
-        myGamePiece.newPos();
-        myGamePiece.update();
-        if (myGameArea.frameNo == 1 || everyinterval(1500)) {
-            currentGreenZone += 1;
-            newYScale -= 20;
-            newY += 10;
-            greenZone.push(new component(-1447 / 6000, 361.75, newYScale, "gameImages/greenSquare.png", 740, newY, "image"));
-        }
-        if (myGameArea.frameNo == 1 || everyinterval(1500)) {
-            currentGreenZoneLower += 1;
-            greenZone.push(new component(-1447 / 6000, 361.75, 100, "gameImages/greenSquare.png", 740, newY + 325, "image"));
-        }
-        
-        myGamePiece.y = zeroPoint - testNumbers[currentNum];
     }
 }
 
