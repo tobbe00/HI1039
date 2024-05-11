@@ -216,3 +216,5 @@ let oldId=10;
 // Fetch data every 0.1 seconds 1000=1s
 setInterval(fetchData, 100);
 
+
+
