@@ -27,13 +27,18 @@ public class GameController {
     boolean gameStart=false;
     boolean gameEnd=false;
 
+
+    public void setGameStart(boolean gameStart) {
+        this.gameStart = gameStart;
+    }
+
     @GetMapping("/extreme")//by id
     public ExtremePointDTO sendExtreme(){
         // return userService.getUserById(id); detta e med geduserbyid efter kommer nr2 med optional
         //ExtremePointDTO mostRecentExtreme=new ExtremePointDTO(457,0);
         //mostRecentExtreme.setId(i);
         i++;
-
+        
 
         return mostRecentExtremePoints;
     }
@@ -67,9 +72,9 @@ public class GameController {
         mostRecentExtremePoints.setMaxPressure(getMax(b));
         mostRecentExtremePoints.setMinPressure(getMin(b));
         mostRecentExtremePoints.setMaxBeforeMin(isMaxBeforeMin(b));
-        mostRecentExtremePoints.setFrequency(getFrequency());
+        /* mostRecentExtremePoints.setFrequency(getFrequency());
         mostRecentExtremePoints.setPointsMax(calculatePoints(mostRecentExtremePoints.getFrequency()));
-        mostRecentExtremePoints.setPointsMin(calculatePoints(mostRecentExtremePoints.getFrequency()));
+        mostRecentExtremePoints.setPointsMin(calculatePoints(mostRecentExtremePoints.getFrequency()));*/
         batchCount++;
         return new ResponseEntity<>(batch,HttpStatus.CREATED);
     }
@@ -80,19 +85,34 @@ public class GameController {
     @PostMapping(path="/zeropoint")
     public ResponseEntity<Boolean> getZeroPoint(@RequestBody ZeroPoint zero){
         zeroPoint=zero.getZeroPointInt();
-        avgPressure=zero.getAvg();
+        //avgPressure=zero.getAvgInt();
         System.out.println(zero);
         System.out.println(zeroPoint+" the mode is:"+zero.getMode());
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
+
     @PostMapping("/gamestart")
-    public ResponseEntity<Boolean> gameStart(@RequestBody boolean gameHasStarted){
-        if (gameHasStarted){
-            emptyGameList();
+    public ResponseEntity<Boolean> gameStart(@RequestBody String gameHasStarted){
+        boolean started = Boolean.parseBoolean(gameHasStarted);
+        
+        System.out.println("hit kommer vi");
+        System.out.println(started);
+        if (started){
+           // emptyGameList();
         }
-        gameStart=gameHasStarted;
+        gameStart=started;
+        //setGameStart(started);
+    
+        System.out.println("gameStart is:"+ gameStart);
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
+
+    @GetMapping("/gamestart")//by id
+    public boolean sendGameStart(){
+        System.out.println(gameStart);
+        return gameStart;
+    }
+
     @PostMapping("/gameEnd")
     public ResponseEntity<Boolean> recivedGameEnd(@RequestBody boolean gameHasEnded){
         //remember to save thegamelist om vi ska ha den i databasen
