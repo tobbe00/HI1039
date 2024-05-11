@@ -139,6 +139,17 @@ public class MainActivity extends BaseActivity{
 
             public void onFinish() {
                 if (mBluetoothGatt != null) {
+                    sendApi.sendGameEnd(true).enqueue((new Callback<Boolean>() {
+                        @Override
+                        public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<Boolean> call, Throwable t) {
+
+                        }
+                    }));
                     mBluetoothGatt.close();
                     mBluetoothGatt = null;
                 }
