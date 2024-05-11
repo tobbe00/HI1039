@@ -23,8 +23,14 @@ public class GameController {
     List<Integer> pointsList=new ArrayList<>();
     ExtremePointDTO mostRecentExtremePoints=new ExtremePointDTO();
     int zeroPoint;
+    int avgPressure;
     boolean gameStart=false;
     boolean gameEnd=false;
+
+
+    public void setGameStart(boolean gameStart) {
+        this.gameStart = gameStart;
+    }
 
     @GetMapping("/extreme")//by id
     public ExtremePointDTO sendExtreme(){
@@ -32,7 +38,7 @@ public class GameController {
         //ExtremePointDTO mostRecentExtreme=new ExtremePointDTO(457,0);
         //mostRecentExtreme.setId(i);
         i++;
-
+        
 
         return mostRecentExtremePoints;
     }
@@ -66,9 +72,9 @@ public class GameController {
         mostRecentExtremePoints.setMaxPressure(getMax(b));
         mostRecentExtremePoints.setMinPressure(getMin(b));
         mostRecentExtremePoints.setMaxBeforeMin(isMaxBeforeMin(b));
-        mostRecentExtremePoints.setFrequency(getFrequency());
+        /* mostRecentExtremePoints.setFrequency(getFrequency());
         mostRecentExtremePoints.setPointsMax(calculatePoints(mostRecentExtremePoints.getFrequency()));
-        mostRecentExtremePoints.setPointsMin(calculatePoints(mostRecentExtremePoints.getFrequency()));
+        mostRecentExtremePoints.setPointsMin(calculatePoints(mostRecentExtremePoints.getFrequency()));*/
         batchCount++;
         return new ResponseEntity<>(batch,HttpStatus.CREATED);
     }
@@ -79,20 +85,37 @@ public class GameController {
     @PostMapping(path="/zeropoint")
     public ResponseEntity<Boolean> getZeroPoint(@RequestBody ZeroPoint zero){
         zeroPoint=zero.getZeroPointInt();
+        //avgPressure=zero.getAvgInt();
         System.out.println(zero);
         System.out.println(zeroPoint+" the mode is:"+zero.getMode());
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
+
     @PostMapping("/gamestart")
-    public ResponseEntity<Boolean> gameStart(@RequestBody boolean gameHasStarted){
-        if (gameHasStarted){
-            emptyGameList();
+    public ResponseEntity<Boolean> gameStart(@RequestBody String gameHasStarted){
+        boolean started = Boolean.parseBoolean(gameHasStarted);
+        
+        System.out.println("hit kommer vi");
+        System.out.println(started);
+        if (started){
+           // emptyGameList();
         }
-        gameStart=gameHasStarted;
+        gameStart=started;
+        //setGameStart(started);
+    
+        System.out.println("gameStart is:"+ gameStart);
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
+
+    @GetMapping("/gamestart")//by id
+    public boolean sendGameStart(){
+        System.out.println(gameStart);
+        return gameStart;
+    }
+
     @PostMapping("/gameEnd")
     public ResponseEntity<Boolean> recivedGameEnd(@RequestBody boolean gameHasEnded){
+        //remember to save thegamelist om vi ska ha den i databasen
         if (gameHasEnded){
             emptyGameList();
         }
@@ -200,17 +223,19 @@ public class GameController {
     }
     private int calculatePointsByTime(int multiplyer){
         int points=0;
+        int diff=200;
+        int changePerTime=50;
         if (theGameList.size()<1200/4){
-            points+=calculatePointsByPressureMax(multiplyer,1,400,900);
+            points+=calculatePointsByPressureMax(multiplyer,1,avgPressure-diff,avgPressure+diff);
             points+=calculatePointsByPressureMin(multiplyer,1,200);
         } else if (theGameList.size()<(1200/4)*2) {
-            points+=calculatePointsByPressureMax(multiplyer,2,450,850);
+            points+=calculatePointsByPressureMax(multiplyer,2,avgPressure-diff+changePerTime,avgPressure+diff-changePerTime);
             points+=calculatePointsByPressureMin(multiplyer,1,150);
         } else if (theGameList.size()<(1200/4)*3) {
-            points+=calculatePointsByPressureMax(multiplyer,3,500,800);
+            points+=calculatePointsByPressureMax(multiplyer,3,avgPressure-diff+changePerTime*2,avgPressure+diff-changePerTime*2);
             points+=calculatePointsByPressureMin(multiplyer,1,100);
         }else {
-            points+=calculatePointsByPressureMax(multiplyer,4,600,700);
+            points+=calculatePointsByPressureMax(multiplyer,4,avgPressure-diff+changePerTime*3,avgPressure+diff-changePerTime*3);
             points+=calculatePointsByPressureMin(multiplyer,1,50);
         }
         return points;
