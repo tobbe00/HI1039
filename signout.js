@@ -39,17 +39,9 @@ function popUp(){
     }
 }
 function signOut(){
-    //sessionStorage.removeItem("email");
-    //sessionStorage.removeItem("isLoggedIn");
-    console.log("Before removing email:", sessionStorage.getItem("email"));
-    console.log("Before removing isLoggedIn:", sessionStorage.getItem("isLoggedIn"));
-  
     // Remove email and isLoggedIn from sessionStorage
     sessionStorage.removeItem("email");
     sessionStorage.removeItem("isLoggedIn");
-  
-    console.log("After removing email:", sessionStorage.getItem("email"));
-    console.log("After removing isLoggedIn:", sessionStorage.getItem("isLoggedIn"));
 
 }
 function popUpHome(){

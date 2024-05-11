@@ -14,6 +14,7 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
     navbarBtn.innerHTML = "<a href='/test5/signOut.html' class='button'>sign out</a>"
 }
 let zeroPoint = parseInt(sessionStorage.getItem("zeroPoint"));
+
 //page specific!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 var myGamePiece;
@@ -101,6 +102,22 @@ function drawText(text, x, y, color = 'black', fontSize = '16px', font = 'Arial'
     ctx.fillText(text, x, y);
     ctx.restore();
 }
+function printEvaluationMessageTop(){
+    let evalMessage=""
+    if(freq<=120&&freq>=100){
+        evalMessage+="good frequency!"
+    }else{
+        evalMessage+="go faster!"
+    }
+
+}
+function showFrequency(){
+    drawText("BPM: "+freq,660,20,color="black",fontSize = '20px', font = 'Arial');
+    //drawText(freq,100,80,color="black",fontSize = '20px', font = 'Arial')
+}
+function showTotPoints(){
+    drawText("Total Points: "+totPoints,600,450,color="black",fontSize = '20px', font = 'Arial');
+}
 
 function updateGameArea() {
     var x, y;
@@ -153,7 +170,7 @@ function updateGameArea() {
     }*/
 
     myGamePiece.y = zeroPoint - testNumbers[currentNum];
-   
+    
     
 
     
@@ -172,6 +189,8 @@ function updateGameArea() {
     }
 
     drawText(`Y: ${Math.round(myGamePiece.y)}`, 10, 20, 'blue', '14px');
+    showFrequency();
+    showTotPoints();
     myGamePiece.newPos();
     myGamePiece.update();   
 }
@@ -183,6 +202,10 @@ function everyinterval(n) {
 //about reeding from api!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 let oldId=10;
+let freq=0;
+let upperPoints=0;
+let lowerPoints=0;
+let totPoints=0;
   function fetchData() {
     fetch('http://localhost:8080/game/extreme')
         .then(response => {
@@ -196,7 +219,9 @@ let oldId=10;
             
             if(oldId != data.id){
                 console.log(data);
-
+                freq=data.frequency;
+                upperPoints=data.pointsMax;
+                lowerPoints=data.pointsMin;
                 if(data.maxBeforeMin){
                     testNumbers.push(data.maxPressure);
                     testNumbers.push(data.minPressure);

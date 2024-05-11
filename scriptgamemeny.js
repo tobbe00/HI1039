@@ -25,6 +25,8 @@ let enterButton = document.getElementById('btnStart-game');
 enterButton.onclick=function(){
 // Get the zero point value
 let zeroPoint = document.getElementById('zero-point').value;
+//get the avg value
+let avgValue=document.getElementById("avg-point").value;
 
 // Get the difficulty level
 let difficultySelect = document.getElementById('mode');
@@ -33,6 +35,7 @@ let difficulty = difficultySelect.options[difficultySelect.selectedIndex].value;
 // Example usage
 console.log('Zero Point:', zeroPoint);
 console.log('Mode:', difficulty);
+console.log("avg:",avgValue);
 if(!sessionStorage.getItem("isLoggedIn")){
     const confirmed = window.confirm('You need to log in first. Press OK to go to the login page.');
 
@@ -47,7 +50,8 @@ if(!sessionStorage.getItem("isLoggedIn")){
 // Add your logic here based on the retrieved values
 let data = {
     zero: zeroPoint,
-    mode: difficulty
+    mode: difficulty,
+    avg: avgValue
 };
 
 // Make a POST request to your backend
@@ -62,6 +66,7 @@ fetch('http://localhost:8080/game/zeropoint', {
     // Handle the response
     console.log('Response:', response);
     sessionStorage.setItem("zeroPoint",zeroPoint);
+    sessionStorage.setItem("avg",avgValue);
     sessionStorage.setItem("mode",difficulty);
    
     if(response.ok){
