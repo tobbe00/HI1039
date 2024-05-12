@@ -150,13 +150,13 @@ enterBtn.onclick=function(){
     if(sessionStorage.getItem("isLoggedIn")=="true"){
         console.log(sessionStorage.getItem("isLoggedIn"))
         //signedIn.innerHTML="signed in";
-        navbarBtn.innerHTML = "<a href='/test5/signOut.html' class='button'>sign out</a>"
+        navbarBtn.innerHTML = "<a href='/HI1039/signOut.html' class='button'>sign out</a>"
     }
 
 }
 //pop up som visar att man e inloggad
 function popUp(){
-    navbarBtn.innerHTML = "<a href='/test5/signOut.html' class='button'>sign out</a>"
+    navbarBtn.innerHTML = "<a href='/HI1039/signOut.html' class='button'>sign out</a>"
     const confirmed = window.confirm('You are logged in.');
     if (confirmed) {
         location.reload();
@@ -175,7 +175,7 @@ function storeLoggedIn(){
 if(sessionStorage.getItem("isLoggedIn")=="true"){
     console.log(sessionStorage.getItem("isLoggedIn"))
     //signedIn.innerHTML="signed in";
-    navbarBtn.innerHTML = "<a href='/test5/signOut.html' class='button'>sign out</a>"
+    navbarBtn.innerHTML = "<a href='/HI1039/signOut.html' class='button'>sign out</a>"
 }
 
 

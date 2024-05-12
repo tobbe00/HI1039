@@ -11,7 +11,7 @@ let navbarBtn = document.querySelector('.navbar__btn');
 if(sessionStorage.getItem("isLoggedIn")=="true"){
     console.log(sessionStorage.getItem("isLoggedIn"))
     //signedIn.innerHTML="signed in";
-    navbarBtn.innerHTML = "<a href='/test5/signOut.html' class='button'>sign out</a>"
+    navbarBtn.innerHTML = "<a href='/HI1039/signOut.html' class='button'>sign out</a>"
 }
 //page specific-----------------------------------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ if(!sessionStorage.getItem("isLoggedIn")){
 
     // If the user confirms, redirect to the login page
     if (confirmed) {
-        window.location.href = '/test5/login.html'; // Replace '/login' with your login page URL
+        window.location.href = '/HI1039/login.html'; // Replace '/login' with your login page URL
     }
    
 }
@@ -66,11 +66,12 @@ fetch('http://localhost:8080/game/zeropoint', {
     // Handle the response
     console.log('Response:', response);
     sessionStorage.setItem("zeroPoint",zeroPoint);
+    sessionStorage.setItem("avg",avgValue);
     sessionStorage.setItem("mode",difficulty);
    
     if(response.ok){
         // Navigate to a new page
-        window.location.href = "/test5/game.html";
+        window.location.href = "/HI1039/game.html";
 
     }else{
         const confirmed = window.confirm('Something went wrong! try again, maybe the server is not working?');

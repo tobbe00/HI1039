@@ -11,7 +11,7 @@ let navbarBtn = document.querySelector('.navbar__btn');
 if(sessionStorage.getItem("isLoggedIn")=="true"){
     console.log(sessionStorage.getItem("isLoggedIn"))
     //signedIn.innerHTML="signed in";
-    navbarBtn.innerHTML = "<a href='/test5/signOut.html' class='button'>sign out</a>"
+    navbarBtn.innerHTML = "<a href='/HI1039/signOut.html' class='button'>sign out</a>"
 }
 let zeroPoint = parseInt(sessionStorage.getItem("zeroPoint"));
 
@@ -25,14 +25,14 @@ var greenZoneLower = [];
 var currentGreenZone = -1;
 var currentGreenZoneLower = -1;
 var newYScale= 100, newY = 25;
-var testNumbers = [];
+var testNumbers = [300,200,500,700];
 var currentNum = 0;
 var gameStarted = false;
 
 
 function startGame() {
     myGamePiece = new component(0, 16, 16, "gameImages/smiley.gif", 380, zeroPoint, "image");
-    myBackGround = new component(-1447/6000, window.innerWidth,window.innerHeight, "gameImages/graphbackground2.png", 0,0, "image");
+    myBackGround = new component(-1447/6000, window.innerWidth,window.innerHeight,"gameImages/graphbackground2.png", 0,0, "image");
     greenZone.push(new component(-1447/6000, 740, 100, "gameImages/greenSquare.png", 0, 25, "image"));
     greenZoneLower.push(new component(-1447/6000, 740, 100, "gameImages/greenSquare.png", 0, 350, "image"));
     myGameArea.start();
@@ -41,6 +41,8 @@ function startGame() {
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.context = this.canvas.getContext("2d");
@@ -110,7 +112,14 @@ function printEvaluationMessageTop(){
     }else{
         evalMessage+="go faster!"
     }
-    
+
+}
+function showFrequency(){
+    drawText("BPM: "+freq,660,20,color="black",fontSize = '20px', font = 'Arial');
+    //drawText(freq,100,80,color="black",fontSize = '20px', font = 'Arial')
+}
+function showTotPoints(){
+    drawText("Total Points: "+totPoints,600,450,color="black",fontSize = '20px', font = 'Arial');
 }
 
 function updateGameArea() {
@@ -186,6 +195,9 @@ function updateGameArea() {
             myTrail[i].update();
         }
 
+    
+    myGamePiece.newPos();
+    myGamePiece.update();   
         drawText(`Y: ${Math.round(myGamePiece.y)}`, 10, 20, 'blue', '14px');
         myGamePiece.newPos();
         myGamePiece.update();
@@ -213,6 +225,9 @@ function everyinterval(n) {
 
 let oldId=10;
 let freq=0;
+let upperPoints=0;
+let lowerPoints=0;
+let totPoints=0;
   function fetchData() {
     fetch('http://localhost:8080/game/extreme')
         .then(response => {
@@ -227,6 +242,9 @@ let freq=0;
             if(oldId != data.id){
                 console.log(data);
                 freq=data.frequency;
+                upperPoints=data.pointsMax;
+                lowerPoints=data.pointsMin;
+                totPoints += upperPoints+lowerPoints;
                 if(data.maxBeforeMin){
                     testNumbers.push(data.maxPressure);
                     testNumbers.push(data.minPressure);
@@ -265,4 +283,6 @@ let freq=0;
 
 // Fetch data every 0.1 seconds 1000=1s
 setInterval(fetchData, 100);
+
+
 
