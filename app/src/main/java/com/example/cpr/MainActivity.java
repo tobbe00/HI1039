@@ -78,7 +78,8 @@ public class MainActivity extends BaseActivity{
         restartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               restartRound();
+                gameEnd();
+                restartRound();
             }
         });
     }
@@ -132,27 +133,18 @@ public class MainActivity extends BaseActivity{
         if (mainCountDownTimer != null) {
             mainCountDownTimer.cancel(); // Cancel existing timer if it exists
         }
-        mainCountDownTimer = new CountDownTimer(10000, 1000) {
+        mainCountDownTimer = new CountDownTimer(120000, 1000) {
             public void onTick(long millisUntilFinished) {
                 countdownText.setText(String.valueOf(millisUntilFinished / 1000));
             }
 
             public void onFinish() {
                 if (mBluetoothGatt != null) {
-                    sendApi.sendGameEnd(true).enqueue((new Callback<Boolean>() {
-                        @Override
-                        public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<Boolean> call, Throwable t) {
-
-                        }
-                    }));
                     mBluetoothGatt.close();
                     mBluetoothGatt = null;
                 }
+                Log.d("test1"," ended");
+                gameEnd();
                 countdownText.setVisibility(View.GONE);
                 finishedText.setVisibility(View.VISIBLE);
                 restartButton.setVisibility(View.VISIBLE);
@@ -182,6 +174,19 @@ public class MainActivity extends BaseActivity{
         startButton.setEnabled(true);
     }
 
+    private void gameEnd(){
+        sendApi.sendGameEnd(true).enqueue((new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+
+            }
+        }));
+    }
     private final BluetoothGattCallback mBtGattCallback = new BluetoothGattCallback() {
         @Override
         public void onServicesDiscovered(final BluetoothGatt gatt, int status) {
@@ -263,7 +268,7 @@ public class MainActivity extends BaseActivity{
             batch.add(value);
             count++;
 
-            if(batch.size()==5){
+            if(batch.size()==1){
 
                 Log.d("test1",batch.toString());
                 sendApi.send(batch).enqueue(new Callback<List<Integer>>() {
