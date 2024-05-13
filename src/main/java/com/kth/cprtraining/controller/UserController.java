@@ -2,6 +2,8 @@ package com.kth.cprtraining.controller;
 
 import com.kth.cprtraining.dto.ExtremePointDTO;
 import com.kth.cprtraining.dto.UserDTO;
+import com.kth.cprtraining.mapper.Mapper;
+import com.kth.cprtraining.model.User;
 import com.kth.cprtraining.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+
     private UserService userService;
     public UserController(UserService userService){
         this.userService = userService;
@@ -29,7 +32,6 @@ public class UserController {
         if(!errorMsg.isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMsg);
             //return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMsg);
-
         userDTO = userService.saveUser(userDTO);
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
@@ -59,5 +61,8 @@ public class UserController {
         response.put("salt", userService.findSalt(email));
         return response;
     }
+
+
+
 
 }

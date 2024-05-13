@@ -29,6 +29,11 @@ public class GameController {
     boolean gameStart=false;
     boolean gameEnd=false;
 
+
+    public void setGameStart(boolean gameStart) {
+        this.gameStart = gameStart;
+    }
+
     @GetMapping("/extreme")//by id
     public ExtremePointDTO sendExtreme(){
         // return userService.getUserById(id); detta e med geduserbyid efter kommer nr2 med optional
@@ -37,6 +42,8 @@ public class GameController {
         batchId++;
         
 
+        pointsList.add(mostRecentExtremePoints.getPointsMax());
+        pointsList.add(mostRecentExtremePoints.getPointsMin());
         return mostRecentExtremePoints;
     }
 
@@ -114,7 +121,7 @@ public class GameController {
 
     @PostMapping("/gameEnd")
     public ResponseEntity<Boolean> recivedGameEnd(@RequestBody String gameHasEnded){
-        
+
         boolean ended = Boolean.parseBoolean(gameHasEnded);
         //remember to save thegamelist om vi ska ha den i databasen
         if (ended){
