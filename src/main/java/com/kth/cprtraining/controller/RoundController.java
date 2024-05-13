@@ -1,6 +1,7 @@
 package com.kth.cprtraining.controller;
 
 import com.kth.cprtraining.dto.LeaderboardDTO;
+import com.kth.cprtraining.dto.RoundFromWebDTO;
 import com.kth.cprtraining.model.Round;
 import com.kth.cprtraining.service.RoundService;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,16 @@ public class RoundController {
         }
         return new ResponseEntity<>(status, HttpStatus.CREATED);
     }
+    @PostMapping("/saveRound")
+    public ResponseEntity<Boolean> createRound2(@RequestBody RoundFromWebDTO roundFromWebDTO){
+        boolean status = false;
+
+        if(roundService.saveRoundFromWeb(roundFromWebDTO)){
+            status = true;
+        }
+        return new ResponseEntity<>(status, HttpStatus.CREATED);
+    }
+
 
 
     @GetMapping//by id

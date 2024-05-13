@@ -2,9 +2,12 @@ package com.kth.cprtraining.service;
 
 import com.kth.cprtraining.dto.LeaderboardDTO;
 import com.kth.cprtraining.dto.RoundDTO;
+import com.kth.cprtraining.dto.RoundFromWebDTO;
 import com.kth.cprtraining.mapper.Mapper;
 import com.kth.cprtraining.model.Round;
+import com.kth.cprtraining.model.User;
 import com.kth.cprtraining.repository.RoundRepository;
+import com.kth.cprtraining.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,11 +17,12 @@ import java.util.Optional;
 public class RoundServiceImpl implements RoundService{
     private RoundRepository roundRepository;
     private Mapper<Round, RoundDTO> mapper;
+    private UserRepository userRepository;
 
-
-    public RoundServiceImpl(RoundRepository roundRepository, Mapper<Round, RoundDTO> mapper) {
+    public RoundServiceImpl(RoundRepository roundRepository, Mapper<Round, RoundDTO> mapper,UserRepository userRepository) {
         this.roundRepository = roundRepository;
         this.mapper = mapper;
+        this.userRepository=userRepository;
     }
 
     @Override
@@ -32,6 +36,7 @@ public class RoundServiceImpl implements RoundService{
         return false;
     }
 
+
     @Override
     public RoundDTO findRoundById(Long roundId) {
         Optional<Round> opt = roundRepository.findById(roundId);
@@ -40,6 +45,22 @@ public class RoundServiceImpl implements RoundService{
             roundDTO = mapper.mapToDTO(opt.get());
         }
         return roundDTO;
+    }
+
+    @Override
+    public boolean saveRoundFromWeb(RoundFromWebDTO roundFromWebDTO) {
+        User user=userRepository.findUserByEmail(roundFromWebDTO.getEmail());
+        Round roundToSave=new Round();
+        roundToSave.setUser(user);
+        roundToSave.setUsername(user.getUsername());
+        roundToSave.setPoints(roundFromWebDTO.getPoints());
+
+
+        Round round2 = roundRepository.save(roundToSave);
+        if (round2 != null)
+            return true;
+
+        return false;
     }
 
     @Override
