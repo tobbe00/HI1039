@@ -106,9 +106,9 @@ public class GameController {
 
         if (started){
             theGameList.clear();
-            System.out.println("Resetting batchId. Previous value: " + batchId);
+
             batchId = 0;
-            System.out.println("New batchId value: " + batchId);
+
         }
         gameEnd = false;
         gameStart=started;
