@@ -27,7 +27,7 @@ var currentBackgroundIndex = 0;
 var myGamePiece, myBackGround;
 var testNumbers = [], myTrail = [], greenZoneUpper = [], greenZoneLower = [];
 var currentNum = 0, currentGreenZone = 0, currentGreenZoneLower = 0;
-var gameStarted = false, gameEnded = false, needsReset = false;
+var gameStarted = false, gameEnded = false, needsReset = true;
 
 var toastMessage = "";
 var toastDisplayDuration = 100; // Duration in milliseconds
@@ -200,7 +200,7 @@ function updateGameArea() {
         if (currentNum >= 0 && currentNum < testNumbers.length) {
             let targetY = zeroPoint - (testNumbers[currentNum] * scalingFactor);
             
-            if (myGamePiece.y > targetY) {
+           /* if (myGamePiece.y > targetY) {
                 myGamePiece.speedY = -5;
                 if (myGamePiece.speedY > 0) {
                     currentNum += 1;
@@ -214,7 +214,9 @@ function updateGameArea() {
             
             if (currentNum >= testNumbers.length) {
                 currentNum = 0;
-            }
+            }*/
+
+            myGamePiece.y=targetY;
         }
         
         if (myGameArea.frameNo == 1 || everyinterval(1)) {
@@ -286,9 +288,10 @@ function updateGameArea() {
     showFrequency();
     drawText(`Y: ${zeroPoint - myGamePiece.y}`, 10, 20, 'blue', '14px');
     drawToast();
-    if(gameEnded && !needsReset){
-        saveRound();
+    if( gameEnded && !needsReset){
+        console.log("hit kommer vi");
         needsReset = true;
+        saveRound();
         resetGame();
     } 
     
@@ -333,6 +336,7 @@ let totPoints=0;
                 }
             }
             oldId=data.id;
+            currentNum=data.id;
             if (currentNum >= testNumbers.length) {
                 currentNum = testNumbers.length - 1;
             }
@@ -368,11 +372,10 @@ let totPoints=0;
             return response.json();
         })
         .then(data => {
-            gameEnded = data
-            if(gameEnded){
-                    
-            }
             
+            gameEnded = data
+           
+           // console.log(gameEnded);
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
