@@ -243,18 +243,23 @@ function updateGameArea() {
             greenZoneLower.push(new component(-1, window.innerWidth, newLowerGreenZoneHeight, "rgba(0, 255, 0, 0.9)", newLowerGreenZoneX, lowerGreenZoneY + (70 - newLowerGreenZoneHeight), "zone"));
         }
         
-        for (i = 0; i < greenZoneUpper.length; i += 1) {
-            greenZoneUpper[i].newPos();
-            greenZoneUpper[i].update();
-        }
-        for (i = 0; i < greenZoneLower.length; i += 1) {
-            greenZoneLower[i].newPos();
-            greenZoneLower[i].update();
-        }
-        for (i = 0; i < myTrail.length; i += 1) {
-            myTrail[i].newPos();
-            myTrail[i].update();
-        }
+        greenZoneUpper = greenZoneUpper.filter(zone => zone.x + zone.width > 0);
+        greenZoneLower = greenZoneLower.filter(zone => zone.x + zone.width > 0);
+        myTrail = myTrail.filter(trail => trail.x + trail.width > 0);
+
+        // Update remaining elements
+        greenZoneUpper.forEach(zone => {
+            zone.newPos();
+            zone.update();
+        });
+        greenZoneLower.forEach(zone => {
+            zone.newPos();
+            zone.update();
+        });
+        myTrail.forEach(trail => {
+            trail.newPos();
+            trail.update();
+        });
 
 
         if (currentGreenZone >= 0 && currentGreenZone < greenZoneUpper.length) {
@@ -327,6 +332,7 @@ let totPoints=0;
                 freq=data.frequency;
                 upperPoints=data.pointsMax;
                 lowerPoints=data.pointsMin;
+                totPoints += upperPoints+lowerPoints
                 if(data.maxBeforeMin){
                     testNumbers.push(data.maxPressure);
                     testNumbers.push(data.minPressure);
