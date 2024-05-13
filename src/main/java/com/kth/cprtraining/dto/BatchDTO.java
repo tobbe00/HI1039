@@ -12,6 +12,6 @@ import java.lang.reflect.Array;
 @Builder
 @Data
 public class BatchDTO {
-   private int[] theBatch=new int[5];
+   private int[] theBatch=new int[2];
    private int batchID;
 }
