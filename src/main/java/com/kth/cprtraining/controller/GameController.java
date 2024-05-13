@@ -146,7 +146,7 @@ public class GameController {
     }
     public Batch handleBatch(Batch batch){
         int displace=zeroPoint;
-        for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < 2; j++) {
             batch.setTheBatchATIndex(Math.abs(displace-batch.getBatchIntAtID(j)),j);
         }
         return batch;
@@ -154,14 +154,14 @@ public class GameController {
 
     public int getMax(Batch batch){
         int max=0;
-        for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < 2; j++) {
             max=Math.max(batch.getBatchIntAtID(j),max);
         }
         return max;
     }
     public int getMin(Batch batch){
         int min=batch.getBatchIntAtID(0);
-        for (int j = 1; j < 5; j++) {
+        for (int j = 1; j < 2; j++) {
             min=Math.min(batch.getBatchIntAtID(j),min);
         }
         return min;
@@ -172,7 +172,7 @@ public class GameController {
         int max=getMax(batch);
         int minIndex=0;
         int maxIndex=0;
-        for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < 2; j++) {
             if (batch.getBatchIntAtID(j)==min){
                 minIndex=j;
             }
