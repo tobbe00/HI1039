@@ -18,8 +18,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/game")
 public class GameController {
-    int i=0;
+    int batchId =0;
+
     List<Integer> theGameList =new ArrayList<>();
+
     List<Integer> pointsList=new ArrayList<>();
     ExtremePointDTO mostRecentExtremePoints=new ExtremePointDTO();
     int zeroPoint;
@@ -37,7 +39,8 @@ public class GameController {
         // return userService.getUserById(id); detta e med geduserbyid efter kommer nr2 med optional
         //ExtremePointDTO mostRecentExtreme=new ExtremePointDTO(457,0);
         //mostRecentExtreme.setId(i);
-        i++;
+        batchId++;
+        
 
         pointsList.add(mostRecentExtremePoints.getPointsMax());
         pointsList.add(mostRecentExtremePoints.getPointsMin());
@@ -59,7 +62,7 @@ public class GameController {
         Batch b=new Batch();
         b.setBatchID(batchCount);
 
-        for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < 1; j++) {
             b.setTheBatchATIndex(batch.get(j),j);//gör om till batch från listan vi tar in
         }
 
@@ -86,37 +89,56 @@ public class GameController {
     @PostMapping(path="/zeropoint")
     public ResponseEntity<Boolean> getZeroPoint(@RequestBody ZeroPoint zero){
         zeroPoint=zero.getZeroPointInt();
-        avgPressure=zero.getAvg();
+        avgPressure=zero.getAvgInt();
         System.out.println(zero);
         System.out.println(zeroPoint+" the mode is:"+zero.getMode());
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
+
     @PostMapping("/gamestart")
-    public ResponseEntity<Boolean> gameStart(@RequestBody boolean gameHasStarted){
-        if (gameHasStarted){
-            emptyGameList();
+    public ResponseEntity<Boolean> gameStart(@RequestBody String gameHasStarted){
+        boolean started = Boolean.parseBoolean(gameHasStarted);
+        
+        System.out.println("hit kommer vi");
+
+        if (started){
+           theGameList.clear();
+           batchId =0;
         }
-        gameStart=gameHasStarted;
+        gameEnd = false;
+        gameStart=started;
+
+    
+        System.out.println("gameStart is:"+ gameStart);
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
+
+    @GetMapping("/gamestart")//by id
+    public boolean sendGameStart(){
+
+        return gameStart;
+    }
+
     @PostMapping("/gameEnd")
-    public ResponseEntity<Boolean> recivedGameEnd(@RequestBody boolean gameHasEnded){
+    public ResponseEntity<Boolean> recivedGameEnd(@RequestBody String gameHasEnded){
+
+        boolean ended = Boolean.parseBoolean(gameHasEnded);
         //remember to save thegamelist om vi ska ha den i databasen
-        if (gameHasEnded){
-            emptyGameList();
+        if (ended){
+          //spara gamelist
         }
-        gameEnd=gameHasEnded;
+
+        System.out.println("ended");
+        gameStart = false;
+        gameEnd = ended;
+
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
+    @GetMapping("/gameEnd")//by id
+    public boolean sendGameEnd(){
 
-
-
-
-
-
-
-
-
+        return gameEnd;
+    }
 
 
 
@@ -124,10 +146,10 @@ public class GameController {
 
     //hjälp metoder
     public void emptyGameList(){
-        for (int j = theGameList.size()-1; j < theGameList.size(); j--) {
+        for (int j = theGameList.size()-1; j >= 0; j--) {
             theGameList.remove(j);
         }
-        i=0;
+        batchId =0;
     }
     public Batch handleBatch(Batch batch){
         int displace=zeroPoint;
@@ -175,7 +197,7 @@ public class GameController {
         int next;
         int peakCount=0;
 
-        if (theGameList.size()<60)return 0;
+        if (theGameList.size()<61)return 0;
         for (int j = theGameList.size()-61; j <theGameList.size()-1 ; j++) {
             current=theGameList.get(j);
             if (j==theGameList.size()-61){
@@ -195,6 +217,7 @@ public class GameController {
 
         int minRequiredBpm=100;
         int maxRequiredBpm=120;
+
         if (minRequiredBpm<=currentFrequency&&maxRequiredBpm>=currentFrequency){
             return calculatePointsByTime(5);
         }else if(minRequiredBpm-3<=currentFrequency&&maxRequiredBpm+3>=currentFrequency){
@@ -239,7 +262,9 @@ public class GameController {
         //int maxAllowed=100;
         if (pressure<maxAllowed){
             return 5*multiplyer*multiplyer2;
+
         }else {
+
             return 0;
         }
     }
