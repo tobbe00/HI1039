@@ -11,7 +11,7 @@ import retrofit2.http.POST;
 public interface SendApi {
 
     @POST("/game/send")
-    Call<List<Integer>> send(@Body List<Integer> batch);
+    Call<Integer> send(@Body int batch);
 
     @POST("/game/gamestart")
     Call<Boolean> sendGameStart(@Body Boolean gameStarted);

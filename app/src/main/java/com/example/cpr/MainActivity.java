@@ -265,26 +265,26 @@ public class MainActivity extends BaseActivity{
 
             Log.d("test1",""+value);
 
-            batch.add(value);
-            count++;
+            //batch.add(value);
+            //count++;
 
-            if(batch.size()==1){
+           // if(batch.size()==1){
 
-                Log.d("test1",batch.toString());
-                sendApi.send(batch).enqueue(new Callback<List<Integer>>() {
+                Log.d("test1",""+value);
+                sendApi.send(value).enqueue(new Callback<Integer>() {
                     @Override
-                    public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
+                    public void onResponse(Call<Integer> call, Response<Integer> response) {
                         Log.d("test1", "Save successful");
                     }
 
                     @Override
-                    public void onFailure(Call<List<Integer>> call, Throwable t) {
+                    public void onFailure(Call<Integer> call, Throwable t) {
                         Log.d("test1", "Save failed");
                     }
                 });
 
-                batch.clear();
-            }
+           //     batch.clear();
+           // }
 
 
 
