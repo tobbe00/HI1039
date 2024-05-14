@@ -312,6 +312,8 @@ function everyinterval(n) {
 //about reeding from api!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 let oldId=10;
+
+let pointsId=10
 let freq=0;
 let upperPoints=0;
 let lowerPoints=0;
@@ -359,7 +361,6 @@ let totPoints=0;
 
 
 
-        let pointsId=10
         fetch('http://localhost:8080/game/points')
         .then(response => {
             if (!response.ok) {
