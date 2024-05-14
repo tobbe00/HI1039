@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class PointDTO {
-    private double frequency;
+    //private double frequency;
     private int pointsMax;
     private int pointsMin;
     private int id;
