@@ -184,7 +184,7 @@ function showTotPoints(){
     drawText("Total Points: "+totPoints, window.innerWidth-350  , 20,color="black",fontSize = '20px', font = 'Arial');
 }
 
-
+//let scaler=200/Math.abs(zeroPoint-sessionStorage.getItem("avg"))
 function updateGameArea() {
     var x, y;
     
@@ -330,9 +330,10 @@ let totPoints=0;
             if(oldId != data.id){
                 console.log(data);
                 freq=data.frequency;
-                upperPoints=data.pointsMax;
-                lowerPoints=data.pointsMin;
-                totPoints += upperPoints+lowerPoints
+                //upperPoints=data.pointsMax;//ska flyttas
+                //lowerPoints=data.pointsMin;//ska flyttas
+                //totPoints += upperPoints+lowerPoints//totpoints ska flyttas
+                /*
                 if(data.maxBeforeMin){
                     testNumbers.push(data.maxPressure);
                     testNumbers.push(data.minPressure);
@@ -340,6 +341,8 @@ let totPoints=0;
                     testNumbers.push(data.minPressure);
                     testNumbers.push(data.maxPressure);
                 }
+                */
+               testNumbers.push(data.pressure)
             }
             oldId=data.id;
             currentNum=data.id;
@@ -350,6 +353,45 @@ let totPoints=0;
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
+
+
+
+
+
+
+        let pointsId=10
+        fetch('http://localhost:8080/game/points')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Process the data
+            
+            if(pointsId != data.id){
+                console.log(data);
+               
+                upperPoints=data.pointsMax;
+                lowerPoints=data.pointsMin;
+                totPoints += upperPoints+lowerPoints
+               
+            }
+            pointsId=data.id;
+            
+          
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+
+
+
+
+
+
+
 
         fetch('http://localhost:8080/game/gamestart')
         .then(response => {
