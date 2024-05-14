@@ -2,8 +2,10 @@ package com.kth.cprtraining.controller;
 
 import com.kth.cprtraining.dto.ExtremePointDTO;
 
+import com.kth.cprtraining.dto.PointDTO;
 import com.kth.cprtraining.dto.ZeroPoint;
 import com.kth.cprtraining.model.Batch;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,7 @@ public class GameController {
 
     List<Integer> pointsList=new ArrayList<>();
     ExtremePointDTO mostRecentExtremePoints=new ExtremePointDTO();
+    PointDTO mostRecentPoint=new PointDTO();
     int zeroPoint;
     int avgPressure;
     boolean gameStart=false;
@@ -42,24 +45,43 @@ public class GameController {
 
 
 
-        pointsList.add(mostRecentExtremePoints.getPointsMax());
-        pointsList.add(mostRecentExtremePoints.getPointsMin());
+        //pointsList.add(mostRecentExtremePoints.getPointsMax());
+        //pointsList.add(mostRecentExtremePoints.getPointsMin());
 
 
         return mostRecentExtremePoints;
     }
 
+    @GetMapping("/points")//by id
+    public PointDTO sendPoints(){
+
+        return mostRecentPoint;
+    }
+
+
 
 
 
     //int batchCount=0;
+
+    List<Integer> batch2=new ArrayList<>();
+    int pointsId=0;
     @PostMapping(path="/send")
     public ResponseEntity<List<Integer>> send(@RequestBody List<Integer> batch){
         System.out.println(batch);
+        if (batch2.size()<5){
+            batch2.addAll(batch);
 
-        if (theGameList.size()==1200){
-            //saveGame(); lagg metod för att spara
+        }else {
+            batch2.clear();
+            batch2.addAll(batch);
         }
+        if (batch2.size()==5){
+            mostRecentPoint.setId(pointsId);
+            mostRecentPoint.setPointsMax(calculatePoints(getFrequency()));//här ska vi beräkna max points
+            mostRecentPoint.setPointsMin(calculatePoints(getFrequency()));
+        }
+
 
         Batch b=new Batch();
         b.setBatchID(batchId);
@@ -75,12 +97,16 @@ public class GameController {
             theGameList.add(a);
         }
         mostRecentExtremePoints.setId(batchId);
-        mostRecentExtremePoints.setMaxPressure(getMax(b));
-        mostRecentExtremePoints.setMinPressure(getMin(b));
-        mostRecentExtremePoints.setMaxBeforeMin(isMaxBeforeMin(b));
+        batch=handleBatch2(batch);
+        mostRecentExtremePoints.setPressure(batch.get(0));
+        //mostRecentExtremePoints.setMaxPressure(getMax2(batch2));
+        //mostRecentExtremePoints.setMinPressure(getMin2(batch2));
+
+
+        //mostRecentExtremePoints.setMaxBeforeMin(isMaxBeforeMin(b));
         mostRecentExtremePoints.setFrequency(getFrequency());
-        mostRecentExtremePoints.setPointsMax(calculatePoints(mostRecentExtremePoints.getFrequency()));
-        mostRecentExtremePoints.setPointsMin(calculatePoints(mostRecentExtremePoints.getFrequency()));
+        //mostRecentExtremePoints.setPointsMax(calculatePoints(mostRecentExtremePoints.getFrequency()));
+        //mostRecentExtremePoints.setPointsMin(calculatePoints(mostRecentExtremePoints.getFrequency()));
         batchId++;
         return new ResponseEntity<>(batch,HttpStatus.CREATED);
     }
@@ -163,6 +189,13 @@ public class GameController {
         }
         return batch;
     }
+    public List<Integer> handleBatch2(List<Integer> batch){
+        int displace=zeroPoint;
+        for (int j = 0; j < batch.size(); j++) {
+            batch.set(Math.abs(displace-batch.get(j)),j);
+        }
+        return batch;
+    }
 
     public int getMax(Batch batch){
         int max=0;
@@ -175,6 +208,20 @@ public class GameController {
         int min=batch.getBatchIntAtID(0);
         for (int j = 1; j < 2; j++) {
             min=Math.min(batch.getBatchIntAtID(j),min);
+        }
+        return min;
+    }
+    public int getMax2(List<Integer> batch){
+        int max=0;
+        for (int j = 0; j < batch.size(); j++) {
+            max=Math.max(batch.get(j),max);
+        }
+        return max;
+    }
+    public int getMin2(List<Integer> batch){
+        int min=batch.get(0);
+        for (int j = 1; j < batch.size(); j++) {
+            min=Math.min(batch.get(j),min);
         }
         return min;
     }
@@ -219,7 +266,7 @@ public class GameController {
         }
 
 
-    private int calculatePoints( double currentFrequency ) {
+    private int calculatePoints(double currentFrequency) {
 
         int minRequiredBpm=100;
         int maxRequiredBpm=120;
@@ -256,7 +303,8 @@ public class GameController {
         return points;
     }
     private int calculatePointsByPressureMax(int multiplyer,int multiplyer2,int minAllowed,int maxAllowed){
-        int pressure=mostRecentExtremePoints.getMaxPressure();
+       // int pressure=mostRecentExtremePoints.getMaxPressure();
+        int pressure=getMax2(batch2);
         if (pressure<maxAllowed&&pressure>minAllowed){
             return 5*multiplyer*multiplyer2;
         }else {
@@ -264,7 +312,8 @@ public class GameController {
         }
     }
     private int calculatePointsByPressureMin(int multiplyer,int multiplyer2,int maxAllowed){
-        int pressure=mostRecentExtremePoints.getMinPressure();
+        //int pressure=mostRecentExtremePoints.getMinPressure();
+        int pressure=getMin2(batch2);
         //int maxAllowed=100;
         if (pressure<maxAllowed){
             return 5*multiplyer*multiplyer2;

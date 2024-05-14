@@ -10,11 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class ExtremePointDTO {
-    private int maxPressure;
-    private int minPressure;
+    //private int maxPressure;
+    //private int minPressure;
     private int id;
-    private boolean maxBeforeMin;
+    private int pressure;
+    //private boolean maxBeforeMin;
     private double frequency;
-    private int pointsMax;
-    private int pointsMin;
+   // private int pointsMax;
+   // private int pointsMin;
 }
