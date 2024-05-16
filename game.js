@@ -1,6 +1,8 @@
 const menu=document.querySelector('#mobile-menu');
 const menuLinks=document.querySelector('.navbar__menu');
-
+function showGameOverPopup() {
+    document.getElementById('gameOverPopup').style.display = 'block';
+}
 menu.addEventListener('click',function(){
     menu.classList.toggle('is-active');
     menuLinks.classList.toggle('active');
@@ -13,8 +15,8 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
     //signedIn.innerHTML="signed in";
     navbarBtn.innerHTML = "<a href='/HI1039/signOut.html' class='button'>sign out</a>"
 }
-let zeroPoint = parseInt(sessionStorage.getItem("zeroPoint"));
-console.log('Original zeroPoint:', zeroPoint);
+//let zeroPoint = parseInt(sessionStorage.getItem("zeroPoint"));
+//console.log('Original zeroPoint:', zeroPoint);
 
 //page specific!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 var backgroundImages = [
@@ -24,7 +26,7 @@ var backgroundImages = [
     "gameImages/CPRbackground4.png"
 ];
 var currentBackgroundIndex = 0;
-var myGamePiece, myBackGround;
+var myGamePiece, myBackGround, myButton;
 var testNumbers = [], myTrail = [], greenZoneUpper = [], greenZoneLower = [];
 var currentNum = 0, currentGreenZone = 0, currentGreenZoneLower = 0;
 var gameStarted = false, gameEnded = false, needsReset = true;
@@ -35,28 +37,25 @@ var toastTimestamp = 0;
 
 var navbarHeight = document.getElementById('navbarTot').offsetHeight;
 var canvasHeight = window.innerHeight - navbarHeight;
-var scalingFactor = canvasHeight / Math.max(zeroPoint, canvasHeight);
-var dynamicOffset = canvasHeight * 0.01;
-zeroPoint = Math.min(zeroPoint, canvasHeight) - dynamicOffset; 
-var upperGreenZoneY = zeroPoint - (200 * scalingFactor);
-var lowerGreenZoneY = zeroPoint - 50;
-console.log('Scaled zeroPoint:', zeroPoint);
-console.log('Scaling Factor:', scalingFactor);
-console.log('Dynamic Offset:', dynamicOffset);
+
+zeroPoint = 500;
+var upperGreenZoneY = 300; 
+var lowerGreenZoneY = 500;
+
 
 function startGame() {
     
-    myGamePiece = new component(0, 30, 30, "gameImages/Heart.png", 300, zeroPoint, "image");
+    myGamePiece = new component(0, 30, 30, "gameImages/Heart.png", 500, zeroPoint, "image");
     currentBackgroundIndex = 0;
-    myBackGround = new backgroundComponent(-1, window.innerWidth, canvasHeight, backgroundImages[currentBackgroundIndex], 0, 0, "image");
+    myBackGround = new backgroundComponent(-3, window.innerWidth, canvasHeight, backgroundImages[currentBackgroundIndex], 0, 0, "image");
 
-    greenZoneUpper.push(new component(-1, window.innerWidth, 100, "rgba(0, 255, 0, 0.9)", 0, upperGreenZoneY, "color  "));
-    greenZoneLower.push(new component(-1, window.innerWidth, 70, "rgba(0, 255, 0, 0.9)", 0, lowerGreenZoneY, "color"));
-    
+    greenZoneUpper.push(new component(-3, window.innerWidth*3, 100, "rgba(0, 255, 0, 0.9)", 0, upperGreenZoneY, "color  "));
+    greenZoneLower.push(new component(-3, window.innerWidth*3, 70, "rgba(0, 255, 0, 0.9)", 0, lowerGreenZoneY-50, "color"));
+    myButton = new button('test', '#eeaa00', '#001122',0,100,100,50)
     myGameArea.start();
 }
 function resetGame() {
-   
+    document.getElementById('gameOverPopup').style.display = 'none';
     myGameArea.stop();
 
     myTrail = [];
@@ -74,6 +73,8 @@ function resetGame() {
     startGame();
 }
 
+// Fetch data every 0.1 seconds 1000=1s
+setInterval(fetchData, 100);
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
@@ -134,8 +135,6 @@ function backgroundComponent(speed, width, height, src, x, y) {
     }
 }
 
-
-
 function component(speed, width, height, color, x, y, type) {
     this.type = type;
     if (type == "image") {
@@ -167,27 +166,9 @@ function component(speed, width, height, color, x, y, type) {
 
 }
 
-function drawText(text, x, y, color = 'black', fontSize = '16px', font = 'Arial') {
-    var ctx = myGameArea.context;
-    ctx.save();
-    ctx.font = `${fontSize} ${font}`;
-    ctx.fillStyle = color;
-    ctx.fillText(text, x, y);
-    ctx.restore();
-}
-
-function showFrequency(){
-    drawText("BPM: "+freq,window.innerWidth-150, 20, color="black",fontSize = '20px', font = 'Arial');
-    //drawText(freq,100,80,color="black",fontSize = '20px', font = 'Arial')
-}
-function showTotPoints(){
-    drawText("Total Points: "+totPoints, window.innerWidth-350  , 20,color="black",fontSize = '20px', font = 'Arial');
-}
-
 //let scaler=200/Math.abs(zeroPoint-sessionStorage.getItem("avg"))
 function updateGameArea() {
     var x, y;
-    
     myGameArea.clear();
     
     
@@ -198,19 +179,22 @@ function updateGameArea() {
         myGameArea.frameNo += 1;
         
         if (currentNum >= 0 && currentNum < testNumbers.length) {
-            let targetY = zeroPoint - (testNumbers[currentNum] * scalingFactor);
+            let targetY = zeroPoint - testNumbers[currentNum];
             
-           /* if (myGamePiece.y > targetY) {
-                myGamePiece.speedY = -5;
+           /*if (myGamePiece.y > targetY) {
+                myGamePiece.speedY = -10;
                 if (myGamePiece.speedY > 0) {
                     currentNum += 1;
                 }
             } else if (myGamePiece.y < targetY) {
-                myGamePiece.speedY = 5; 
+                myGamePiece.speedY = 10; 
                 if (myGamePiece.speedY < 0) {
                     currentNum += 1;
                 }
+            } else if(myGamePiece.y == targetY){
+                myGamePiece.speedY = 0;
             }
+            
             
             if (currentNum >= testNumbers.length) {
                 currentNum = 0;
@@ -219,13 +203,13 @@ function updateGameArea() {
             myGamePiece.y=targetY;
         }
         
-        if (myGameArea.frameNo == 1 || everyinterval(1)) {
-            x = myGamePiece.x+10;
-            y = myGamePiece.y+10;
-            myTrail.push(new component(-1, 10, 10, "gameImages/redTrail.png", x, y, "image"));
+        if (myGameArea.frameNo == 1 || everyinterval(2)) {
+            x = myGamePiece.x;
+            y = myGamePiece.y+5;
+            myTrail.push(new component(-3, 20, 20, "gameImages/Heart.png", x, y, "image"));
         }
 
-
+        
         if (myGameArea.frameNo == 1 || everyinterval(500)) {
             currentGreenZone += 1;
         
@@ -234,13 +218,12 @@ function updateGameArea() {
             let newUpperGreenZoneX = lastUpperGreenZone.x + lastUpperGreenZone.width;
             let newUpperGreenZoneHeight = Math.max(lastUpperGreenZone.height - 15, 15);
             let newUpperGreenZoneY = lastUpperGreenZone.y + (15 / 2);
-
-            greenZoneUpper.push(new component(-1, window.innerWidth, newUpperGreenZoneHeight, "rgba(0, 255, 0, 0.9)", newUpperGreenZoneX, newUpperGreenZoneY, "zone"));
-        
             let lastLowerGreenZone = greenZoneLower[greenZoneLower.length - 1];
             let newLowerGreenZoneX = lastLowerGreenZone.x + lastLowerGreenZone.width;
             let newLowerGreenZoneHeight = Math.max(lastLowerGreenZone.height - 10, 10);
-            greenZoneLower.push(new component(-1, window.innerWidth, newLowerGreenZoneHeight, "rgba(0, 255, 0, 0.9)", newLowerGreenZoneX, lowerGreenZoneY + (70 - newLowerGreenZoneHeight), "zone"));
+            
+            greenZoneUpper.push(new component(-3, window.innerWidth*3, newUpperGreenZoneHeight, "rgba(0, 255, 0, 0.9)", newUpperGreenZoneX, newUpperGreenZoneY, "zone"));
+            greenZoneLower.push(new component(-3, window.innerWidth*3, newLowerGreenZoneHeight, "rgba(0, 255, 0, 0.9)", newLowerGreenZoneX, lowerGreenZoneY + (70 - newLowerGreenZoneHeight), "zone"));
         }
         
         greenZoneUpper = greenZoneUpper.filter(zone => zone.x + zone.width > 0);
@@ -287,153 +270,69 @@ function updateGameArea() {
         
         
     }
+    drawLine(lowerGreenZoneY+20);
     myGamePiece.newPos();
     myGamePiece.update();
     showTotPoints();
     showFrequency();
     drawText(`Y: ${zeroPoint - myGamePiece.y}`, 10, 20, 'blue', '14px');
     drawToast();
+    
+
     if( gameEnded && !needsReset){
         console.log("hit kommer vi");
+        showGameOverPopup();
+        resetButton();
         needsReset = true;
-        saveRound();
-        resetGame();
-    } 
-    
-        
+        myGamePiece.speedY = 0;
+        //saveRound();
+        //resetGame();
+
+    }  
 }
  
-    
-        
+function saveGame() {
+    saveRound();
+}
+function restartGame() {
+    resetGame(); 
+}
+
+function exitGame() {
+    resetGame(); 
+    window.location.href = 'gamemenu.html'; // Adjust the path as necessary
+}
 
 function everyinterval(n) {
     return (myGameArea.frameNo / n) % 1 === 0;
 }
-//about reeding from api!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-let oldId=10;
-
-let pointsId=10
-let freq=0;
-let upperPoints=0;
-let lowerPoints=0;
-let totPoints=0;
-  function fetchData() {
-    fetch('http://localhost:8080/game/extreme')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Process the data
-            
-            if(oldId != data.id){
-                console.log(data);
-                freq=data.frequency;
-                //upperPoints=data.pointsMax;//ska flyttas
-                //lowerPoints=data.pointsMin;//ska flyttas
-                //totPoints += upperPoints+lowerPoints//totpoints ska flyttas
-                /*
-                if(data.maxBeforeMin){
-                    testNumbers.push(data.maxPressure);
-                    testNumbers.push(data.minPressure);
-                }else{
-                    testNumbers.push(data.minPressure);
-                    testNumbers.push(data.maxPressure);
-                }
-                */
-               testNumbers.push(data.pressure)
-            }
-            oldId=data.id;
-            currentNum=data.id;
-            if (currentNum >= testNumbers.length) {
-                currentNum = testNumbers.length - 1;
-            }
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
-
-
-
-
-
-
-        fetch('http://localhost:8080/game/points')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Process the data
-            
-            if(pointsId != data.id){
-                console.log(data);
-               
-                upperPoints=data.pointsMax;
-                lowerPoints=data.pointsMin;
-                totPoints += upperPoints+lowerPoints
-               
-            }
-            pointsId=data.id;
-            
-          
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
-
-
-
-
-
-
-
-
-        fetch('http://localhost:8080/game/gamestart')
-        .then(response => {
-           // console.log(response);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            
-            gameStarted = data
-            
-            
-            
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
-        fetch('http://localhost:8080/game/gameEnd')
-        .then(response => {
-           // console.log(response);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            
-            gameEnded = data
-           
-           // console.log(gameEnded);
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
+function drawLine(yPosition) {
+    let ctx = myGameArea.context;
+    ctx.beginPath();
+    ctx.moveTo(0, yPosition); 
+    ctx.lineTo(ctx.canvas.width, yPosition);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)'; 
+    ctx.lineWidth = 2; 
+    ctx.stroke(); 
 }
 
-// Fetch data every 0.1 seconds 1000=1s
-setInterval(fetchData, 100);
+function drawText(text, x, y, color = 'black', fontSize = '16px', font = 'Arial') {
+    var ctx = myGameArea.context;
+    ctx.save();
+    ctx.font = `${fontSize} ${font}`;
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
+    ctx.restore();
+}
 
+function showFrequency(){
+    drawText("BPM: "+freq,window.innerWidth-150, 20, color="black",fontSize = '20px', font = 'Arial');
+    //drawText(freq,100,80,color="black",fontSize = '20px', font = 'Arial')
+}
+function showTotPoints(){
+    drawText("Total Points: "+totPoints, window.innerWidth-350  , 20,color="black",fontSize = '20px', font = 'Arial');
+}
 function showToast(message) {
     toastMessage = message;
     toastTimestamp = Date.now();
@@ -454,35 +353,53 @@ function drawToast() {
     }
 }
 
-function saveRound(){
- // Define the data to send
- const data = {
-    points: totPoints, 
-    email: sessionStorage.getItem("email") 
-};
+function button (text, fillColor, textColor, x, y, width, height){
+    this.text = text;
+    this.fillColor = fillColor;
+    this.textColor = textColor;
 
-// Make a POST request to the endpoint
-fetch('http://localhost:8080/rounds/saveRound', {
-    method: 'POST',
-    headers: {
-    'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-})
-.then(response => {
-    if (!response.ok) {
-    throw new Error('Network response was not ok');
-    }
-    return response.json();
-})
-.then(data => {
-    console.log('Response:', data);
-})
-.catch(error => {
-    console.error('Error:', error);
-});
+    this.x = x;
+    this.y = y;
 
+    this.width = width;
+    this.height = height;
+
+    this.draw = function(){
+        c = myGameArea.context;
+        // draw the button body
+        c.fillStyle = this.fillColor;
+        c.fillRect(this.x, this.y, this.width, this.height);
+        // draw the button text
+        c.fillStyle = this.textColor;
+        c.textAlign = 'center';
+        c.textBaseline = 'middle';
+        c.font = '25px Times New Roman';
+        c.fillText(this.text, this.x + this.width / 2, this.y + this.height / 2, this.width);
+      }
+
+      this.inBounds = function(mouseX, mouseY){
+        return !(mouseX < this.x || mouseX > this.x + this.width || mouseY < this.y || mouseY > this.y + this.height);
+      }
 }
 
+function resetButton(){
+    myButton.draw();
+    
+        myGameArea.canvas.addEventListener('click', (event) => {
+            let x = event.pageX - (myGameArea.canvas.clientLeft + myGameArea.canvas.offsetLeft);
+            let y = event.pageY - (myGameArea.canvas.clientTop + myGameArea.canvas.offsetTop);
 
 
+            if (myButton.inBounds(x, y)){
+                if(!needsReset){
+                needsReset = true;//Lägg till funktionalitet för knapptryck
+                saveRound();   
+                resetGame();
+                }
+
+            }
+
+          });
+          
+
+}
