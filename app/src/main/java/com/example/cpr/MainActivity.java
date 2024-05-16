@@ -33,7 +33,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MainActivity extends BaseActivity{
+public class MainActivity extends BaseActivity {
 
 
     private Button startButton;
@@ -43,151 +43,11 @@ public class MainActivity extends BaseActivity{
     private TextView prepareText;
     private TextView countdownText;
     private SendApi sendApi;
-    private CountDownTimer preparationCountDownTimer;
-    private CountDownTimer mainCountDownTimer;
-
-
-    private BluetoothGatt mBluetoothGatt = null;
-    private List<Integer> batch;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        prepareText = findViewById(R.id.prepareText);
-        startButton = findViewById(R.id.startButton);
-        countdownText = findViewById(R.id.countDownTimer);
-        finishedText = findViewById(R.id.finishedRound);
-        restartButton = findViewById(R.id.restartButton);
-        restartButton.setEnabled(false);
-        restartButton.setVisibility(View.GONE);
-        batch = new ArrayList<>();
-
-        RetrofitService retrofitService = new RetrofitService(LoginActivity.url);
-
-        sendApi = retrofitService.getRetrofit().create(SendApi.class);
-
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startRound();
-
-            }
-        });
-        restartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameEnd();
-                restartRound();
-            }
-        });
-    }
-
-    private void startRound(){
-        if (mBluetoothGatt == null) {
-            BluetoothDevice device = getIntent().getExtras().getParcelable("btdevice");
-            if (device != null) {
-                mBluetoothGatt = device.connectGatt(MainActivity.this, false, mBtGattCallback);
-            } else {
-                Log.e("MainActivity", "Bluetooth Device not available");
-                return;
-            }
-        }
-
-        startButton.setVisibility(View.GONE);
-        startButton.setEnabled(false);
-        restartButton.setVisibility(View.VISIBLE);
-        restartButton.setEnabled(true);
-        prepareText.setVisibility(View.VISIBLE);
-        countdownText.setVisibility(View.VISIBLE);
-
-        if (preparationCountDownTimer != null) {
-            preparationCountDownTimer.cancel();
-        }
-        preparationCountDownTimer = new CountDownTimer(3500, 1000) {
-            public void onTick(long millisUntilFinished) {
-                countdownText.setText(String.valueOf(millisUntilFinished / 1000));
-            }
-
-            public void onFinish() {
-                sendApi.sendGameStart(true).enqueue(new Callback<Boolean>() {
-                    @Override
-                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                        Log.d("test1"," response from server");
-                    }
-
-                    @Override
-                    public void onFailure(Call<Boolean> call, Throwable t) {
-
-                    }
-                });
-                startMainCountdown();
-            }
-        }.start();
-    }
-
-    private void startMainCountdown () {
-        mBluetoothGatt.discoverServices();
-        prepareText.setVisibility(View.GONE);
-        if (mainCountDownTimer != null) {
-            mainCountDownTimer.cancel(); // Cancel existing timer if it exists
-        }
-        mainCountDownTimer = new CountDownTimer(120000, 1000) {
-            public void onTick(long millisUntilFinished) {
-                countdownText.setText(String.valueOf(millisUntilFinished / 1000));
-            }
-
-            public void onFinish() {
-                if (mBluetoothGatt != null) {
-                    mBluetoothGatt.close();
-                    mBluetoothGatt = null;
-                }
-                Log.d("test1"," ended");
-                gameEnd();
-                countdownText.setVisibility(View.GONE);
-                finishedText.setVisibility(View.VISIBLE);
-                restartButton.setVisibility(View.VISIBLE);
-            }
-        }.start();
-
-    }
-
-    private void restartRound(){
-        if (mBluetoothGatt != null) {
-            mBluetoothGatt.close();
-            mBluetoothGatt = null;
-        }
-        if (preparationCountDownTimer != null) {
-            preparationCountDownTimer.cancel();
-        }
-        if (mainCountDownTimer != null) {
-            mainCountDownTimer.cancel();
-        }
-
-        prepareText.setVisibility(View.GONE);
-        countdownText.setVisibility(View.GONE);
-        finishedText.setVisibility(View.GONE);
-        restartButton.setVisibility((View.GONE));
-        restartButton.setEnabled(false);
-        startButton.setVisibility(View.VISIBLE);
-        startButton.setEnabled(true);
-    }
-
-    private void gameEnd(){
-        sendApi.sendGameEnd(true).enqueue((new Callback<Boolean>() {
-            @Override
-            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<Boolean> call, Throwable t) {
-
-            }
-        }));
-    }
     private final BluetoothGattCallback mBtGattCallback = new BluetoothGattCallback() {
+        //temporary for debug purposes
+        int count = 0;
+        int batchId = 0;
+
         @Override
         public void onServicesDiscovered(final BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
@@ -240,10 +100,6 @@ public class MainActivity extends BaseActivity{
                 Log.d("test1", "Failed to write descriptor");
             }
         }
-
-        //temporary for debug purposes
-        int count = 0;
-        int batchId =0;
         //int batch[] = new int[5];
 
         /**
@@ -261,51 +117,24 @@ public class MainActivity extends BaseActivity{
             String s = new String(data, StandardCharsets.UTF_8);
 
             //ascii to int
-            int value = (s.charAt(0)-48)*100+(s.charAt(1)-48)*10+(s.charAt(2)-48);
+            int value = (s.charAt(0) - 48) * 100 + (s.charAt(1) - 48) * 10 + (s.charAt(2) - 48);
 
-            Log.d("test1",""+value);
-
-            //batch.add(value);
-            //count++;
-
-           // if(batch.size()==1){
-
-                Log.d("test1",""+value);
-                sendApi.send(value).enqueue(new Callback<Integer>() {
-                    @Override
-                    public void onResponse(Call<Integer> call, Response<Integer> response) {
-                        Log.d("test1", "Save successful");
-                    }
-
-                    @Override
-                    public void onFailure(Call<Integer> call, Throwable t) {
-                        Log.d("test1", "Save failed");
-                    }
-                });
-
-           //     batch.clear();
-           // }
+            Log.d("test1", "" + value);
 
 
+            Log.d("test1", "" + value);
+            sendApi.send(value).enqueue(new Callback<Integer>() {
+                @Override
+                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    Log.d("test1", "Save successful");
+                }
 
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
+                    Log.d("test1", "Save failed");
+                }
+            });
 
-
-        /*mHandler.post(new Runnable() {
-            public void run() {
-                dataText.setVisibility(View.VISIBLE);
-                dataText.setText(s);
-            }
-        });*/
-
-
-
-
-
-
-            /*if (UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e").equals(characteristic.getUuid())) {
-
-                Log.d("test1", "test");
-            }*/
 
         }
 
@@ -323,6 +152,146 @@ public class MainActivity extends BaseActivity{
         }
 
     };
+    private CountDownTimer preparationCountDownTimer;
+    private CountDownTimer mainCountDownTimer;
+    private BluetoothGatt mBluetoothGatt = null;
+    private List<Integer> batch;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+        prepareText = findViewById(R.id.prepareText);
+        startButton = findViewById(R.id.startButton);
+        countdownText = findViewById(R.id.countDownTimer);
+        finishedText = findViewById(R.id.finishedRound);
+        restartButton = findViewById(R.id.restartButton);
+        restartButton.setEnabled(false);
+        restartButton.setVisibility(View.GONE);
+        batch = new ArrayList<>();
 
+        RetrofitService retrofitService = new RetrofitService(LoginActivity.url);
+
+        sendApi = retrofitService.getRetrofit().create(SendApi.class);
+
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startRound();
+
+            }
+        });
+        restartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gameEnd();
+                restartRound();
+            }
+        });
+    }
+
+    private void startRound() {
+        if (mBluetoothGatt == null) {
+            BluetoothDevice device = getIntent().getExtras().getParcelable("btdevice");
+            if (device != null) {
+                mBluetoothGatt = device.connectGatt(MainActivity.this, false, mBtGattCallback);
+            } else {
+                Log.e("MainActivity", "Bluetooth Device not available");
+                return;
+            }
+        }
+
+        startButton.setVisibility(View.GONE);
+        startButton.setEnabled(false);
+        restartButton.setVisibility(View.VISIBLE);
+        restartButton.setEnabled(true);
+        prepareText.setVisibility(View.VISIBLE);
+        countdownText.setVisibility(View.VISIBLE);
+
+        if (preparationCountDownTimer != null) {
+            preparationCountDownTimer.cancel();
+        }
+        preparationCountDownTimer = new CountDownTimer(3500, 1000) {
+            public void onTick(long millisUntilFinished) {
+                countdownText.setText(String.valueOf(millisUntilFinished / 1000));
+            }
+
+            public void onFinish() {
+                sendApi.sendGameStart(true).enqueue(new Callback<Boolean>() {
+                    @Override
+                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        Log.d("test1", " response from server");
+                    }
+
+                    @Override
+                    public void onFailure(Call<Boolean> call, Throwable t) {
+
+                    }
+                });
+                startMainCountdown();
+            }
+        }.start();
+    }
+
+    private void startMainCountdown() {
+        mBluetoothGatt.discoverServices();
+        prepareText.setVisibility(View.GONE);
+        if (mainCountDownTimer != null) {
+            mainCountDownTimer.cancel(); // Cancel existing timer if it exists
+        }
+        mainCountDownTimer = new CountDownTimer(120000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                countdownText.setText(String.valueOf(millisUntilFinished / 1000));
+            }
+
+            public void onFinish() {
+                if (mBluetoothGatt != null) {
+                    mBluetoothGatt.close();
+                    mBluetoothGatt = null;
+                }
+                Log.d("test1", " ended");
+                gameEnd();
+                countdownText.setVisibility(View.GONE);
+                finishedText.setVisibility(View.VISIBLE);
+                restartButton.setVisibility(View.VISIBLE);
+            }
+        }.start();
+
+    }
+
+    private void restartRound() {
+        if (mBluetoothGatt != null) {
+            mBluetoothGatt.close();
+            mBluetoothGatt = null;
+        }
+        if (preparationCountDownTimer != null) {
+            preparationCountDownTimer.cancel();
+        }
+        if (mainCountDownTimer != null) {
+            mainCountDownTimer.cancel();
+        }
+
+        prepareText.setVisibility(View.GONE);
+        countdownText.setVisibility(View.GONE);
+        finishedText.setVisibility(View.GONE);
+        restartButton.setVisibility((View.GONE));
+        restartButton.setEnabled(false);
+        startButton.setVisibility(View.VISIBLE);
+        startButton.setEnabled(true);
+    }
+
+    private void gameEnd() {
+        sendApi.sendGameEnd(true).enqueue((new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+
+            }
+        }));
+    }
 }

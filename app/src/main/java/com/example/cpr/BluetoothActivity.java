@@ -1,32 +1,40 @@
 package com.example.cpr;
 
+import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.example.cpr.utils.DeviceListAdapter;
 
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 
 public class BluetoothActivity extends BaseActivity {
@@ -41,6 +49,12 @@ public class BluetoothActivity extends BaseActivity {
     private Handler mHandler;
 
 
+    private boolean mScanning;
+
+    private ArrayList<BluetoothDevice> mDeviceList;
+    private DeviceListAdapter deviceListAdapter;
+    private ListView deviceListView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,18 +62,54 @@ public class BluetoothActivity extends BaseActivity {
 
         mHandler = new Handler();
 
+        mDeviceList = new ArrayList<>();
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         this.registerReceiver(broadcastReceiver, filter);
 
-        Button checkConnectionButton = findViewById(R.id.checkConnectionButton);
+       // Button checkConnectionButton = findViewById(R.id.checkConnectionButton);
+
+        Button scanButton = findViewById(R.id.scanButton);
+
+        deviceListView = findViewById(R.id.device_list);
 
         dataText = findViewById(R.id.dataText);
 
+        deviceListAdapter = new DeviceListAdapter(this, mDeviceList);
+        deviceListView.setAdapter(deviceListAdapter);
 
-        checkConnectionButton.setOnClickListener(new View.OnClickListener() {
+        scanButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(mBluetoothAdapter.isEnabled()){
+                    mDeviceList.clear();
+                    scanForDevices(true);
+                }else{
+                    Toast.makeText(getApplicationContext(), "Please enable bluetooth to continue", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BluetoothDevice device  =(BluetoothDevice) parent.getItemAtPosition(position);
+                Log.d("test1","Value is "+device.getName());
+
+                mBluetoothGatt = device.connectGatt(BluetoothActivity.this, false, mBtGattCallback);
+
+                if(mBluetoothGatt!=null && mBluetoothGatt.connect()){
+                    Intent intent = new Intent (BluetoothActivity.this, MainActivity.class);
+                    intent.putExtra("btdevice", device);
+                    startActivity(intent);
+                }
+
+            }
+        });
+
+
+        /*checkConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -83,36 +133,9 @@ public class BluetoothActivity extends BaseActivity {
                         Log.d("test1", "fail");
                     }
                 }
-
-                /*if(mBluetoothAdapter.isEnabled()){
-
-                    Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-
-                    for (BluetoothDevice device : pairedDevices) {
-                        Log.d("test",device.getAddress());
-                        checkIfConnected(device);
-                        if(isConnected){
-                            //Log.d("Test",device.getBluetoothClass().toString());
-
-                            Toast.makeText(getApplicationContext(),device.getName() +" CONNECTED",Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(BluetoothActivity.this, MainActivity.class);
-                            startActivity(intent);
-                        }else{
-                            Toast.makeText(getApplicationContext(),"Please connect to a device",Toast.LENGTH_LONG).show();
-                        }
-                    }
-                    }else{
-                    Intent enableBtIntent = new Intent(mBluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivity(enableBtIntent);
-
-                    TextView textViewError = findViewById(R.id.textViewError);
-                    textViewError.setText("Can't connect or find device");
-                    textViewError.setVisibility(View.VISIBLE); // Make sure the TextView is visible
-                }*/
             }
-        });
+        });*/
     }
-
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         BluetoothDevice device;
@@ -133,17 +156,6 @@ public class BluetoothActivity extends BaseActivity {
 
         }
     };
-
-    public void checkIfConnected(BluetoothDevice device) {
-        try {
-            Method m = device.getClass().getMethod("isConnected", (Class[]) null);
-            boolean connected = (boolean) m.invoke(device, (Object[]) null);
-
-            isConnected = connected == true;
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
 
     private final BluetoothGattCallback mBtGattCallback = new BluetoothGattCallback() {
 
@@ -178,8 +190,77 @@ public class BluetoothActivity extends BaseActivity {
                 });
             }
         }
-
-
-
     };
+
+    private void scanForDevices(final boolean enable) {
+        Log.d("test1","clicked");
+        final BluetoothLeScanner scanner =
+                mBluetoothAdapter.getBluetoothLeScanner();
+        if (enable) {
+            if (!mScanning) {
+                // stop scanning after a pre-defined scan period, SCAN_PERIOD
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mScanning) {
+                            mScanning = false;
+                            scanner.stopScan(mScanCallback);
+                            Toast.makeText(getApplicationContext(), "BLE scan stopped", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                }, 5000); //scan for 5000ms
+
+                mScanning = true;
+                scanner.startScan(mScanCallback);
+
+                Toast.makeText(getApplicationContext(), "BLE scan started", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            if (mScanning) {
+                mScanning = false;
+                scanner.stopScan(mScanCallback);
+                Toast.makeText(getApplicationContext(), "BLE scan stopped", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /*
+     * Implementation of scan callback methods
+     */
+    private ScanCallback mScanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            super.onScanResult(callbackType, result);
+            //Log.i(LOG_TAG, "onScanResult");
+            final BluetoothDevice device = result.getDevice();
+            final String name = device.getName();
+
+            mHandler.post(new Runnable() {
+                public void run() {
+                    if (name != null
+                            && name.contains("micro:bit")
+                            && !mDeviceList.contains(device)) {
+                        mDeviceList.add(device);
+
+                        deviceListAdapter.notifyDataSetChanged();
+
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onBatchScanResults(List<ScanResult> results) {
+            super.onBatchScanResults(results);
+            Log.i("test1", "onBatchScanResult");
+        }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            super.onScanFailed(errorCode);
+            Log.i("test1", "onScanFailed"+errorCode);
+        }
+    };
+
 }
