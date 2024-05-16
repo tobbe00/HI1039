@@ -14,4 +14,5 @@ public class PointDTO {
     private int pointsMax;
     private int pointsMin;
     private int id;
+    private double frequency;
 }

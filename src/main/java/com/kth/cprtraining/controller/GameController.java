@@ -32,22 +32,8 @@ public class GameController {
     boolean gameStart=false;
     boolean gameEnd=false;
 
-
-    public void setGameStart(boolean gameStart) {
-        this.gameStart = gameStart;
-    }
-
     @GetMapping("/extreme")//by id
     public ExtremePointDTO sendExtreme(){
-        // return userService.getUserById(id); detta e med geduserbyid efter kommer nr2 med optional
-        //ExtremePointDTO mostRecentExtreme=new ExtremePointDTO(457,0);
-        //mostRecentExtreme.setId(i);
-
-
-
-        //pointsList.add(mostRecentExtremePoints.getPointsMax());
-        //pointsList.add(mostRecentExtremePoints.getPointsMin());
-
 
         return mostRecentExtremePoints;
     }
@@ -58,18 +44,14 @@ public class GameController {
         return mostRecentPoint;
     }
 
-
-
-
-
-    //int batchCount=0;
-
     List<Integer> pointsBatch=new ArrayList<>();
     int pointsId=0;
     @PostMapping(path="/send")
     public ResponseEntity<Integer> send(@RequestBody String test){
         int pressure = Integer.parseInt(test);
        // boolean started = Boolean.parseBoolean(gameHasStarted);
+        System.out.println(pressure);
+        pressure=handleBatch2(pressure);
         System.out.println(pressure);
         if (pointsBatch.size()<5){
             pointsBatch.add(pressure);
@@ -81,43 +63,19 @@ public class GameController {
         if (pointsBatch.size()==5){
             mostRecentPoint.setId(pointsId);
             pointsId++;
+            mostRecentPoint.setFrequency(getFrequency());
             mostRecentPoint.setPointsMax(calculatePoints(getFrequency()));//här ska vi beräkna max points
             mostRecentPoint.setPointsMin(calculatePoints(getFrequency()));
         }
 
-
-        /*Batch b=new Batch();
-        b.setBatchID(batchId);
-
-        for (int j = 0; j < 2; j++) {
-            b.setTheBatchATIndex(batch.get(j),j);//gör om till batch från listan vi tar in
-        }
-
-        b= handleBatch(b);//gör om till att 0 inte e 650
-
-        //theGameList.addAll(batch);
-        for (int a:b.getTheBatch()) {
-            theGameList.add(a);
-        }*/
+        System.out.println("Frequency :"+ getFrequency());
         theGameList.add(pressure);
         mostRecentExtremePoints.setId(pressureId);
-        pressure=handleBatch2(pressure);
         mostRecentExtremePoints.setPressure(pressure);
-        //mostRecentExtremePoints.setMaxPressure(getMax2(batch2));
-        //mostRecentExtremePoints.setMinPressure(getMin2(batch2));
-
-
-        //mostRecentExtremePoints.setMaxBeforeMin(isMaxBeforeMin(b));
-        mostRecentExtremePoints.setFrequency(getFrequency());
-        System.out.println(mostRecentExtremePoints.getFrequency());
-        //mostRecentExtremePoints.setPointsMax(calculatePoints(mostRecentExtremePoints.getFrequency()));
-        //mostRecentExtremePoints.setPointsMin(calculatePoints(mostRecentExtremePoints.getFrequency()));
+        //mostRecentExtremePoints.setFrequency(getFrequency());
         pressureId++;
         return new ResponseEntity<>(pressure,HttpStatus.CREATED);
     }
-
-
-
 
     @PostMapping(path="/zeropoint")
     public ResponseEntity<Boolean> getZeroPoint(@RequestBody ZeroPoint zero){
@@ -178,48 +136,14 @@ public class GameController {
 
 
 
-
-
-    //hjälp metoder
-    public void emptyGameList(){
-        for (int j = theGameList.size()-1; j >= 0; j--) {
-            theGameList.remove(j);
-        }
-        pressureId =0;
-    }
-    public Batch handleBatch(Batch batch){
-        int displace=zeroPoint;
-        for (int j = 0; j < 5; j++) {
-            batch.setTheBatchATIndex(Math.abs(displace-batch.getBatchIntAtID(j)),j);
-        }
-        return batch;
-    }
     public Integer handleBatch2(Integer pressure){
-        int displace=zeroPoint;
-        /*for (int j = 0; j < batch.size(); j++) {
-            batch.set(Math.abs(displace-batch.get(j)),j);
-        }*/
         pressure = pressure-zeroPoint;
+        if(pressure<20
 
-
-
+        ) pressure = 0;
         return pressure;
     }
 
-    public int getMax(Batch batch){
-        int max=0;
-        for (int j = 0; j < 5; j++) {
-            max=Math.max(batch.getBatchIntAtID(j),max);
-        }
-        return max;
-    }
-    public int getMin(Batch batch){
-        int min=batch.getBatchIntAtID(0);
-        for (int j = 1; j < 5; j++) {
-            min=Math.min(batch.getBatchIntAtID(j),min);
-        }
-        return min;
-    }
     public int getMax2(List<Integer> batch){
         int max=0;
         for (int j = 0; j < batch.size(); j++) {
@@ -235,41 +159,29 @@ public class GameController {
         return min;
     }
 
-    public boolean isMaxBeforeMin(Batch batch){
-        int min=getMin(batch);
-        int max=getMax(batch);
-        int minIndex=0;
-        int maxIndex=0;
-        for (int j = 0; j < 2; j++) {
-            if (batch.getBatchIntAtID(j)==min){
-                minIndex=j;
-            }
-            if (batch.getBatchIntAtID(j)==max){
-                maxIndex=j;
-            }
-
-        }
-        return maxIndex>minIndex;
-    }
         public double getFrequency(){
             //3sec ger 3*20=60
             int current;
             int old=0;
             int next;
             int peakCount=0;
+            int oldOld = 0;
+            int nextNext;
 
-            if (theGameList.size()<31)return 0;
-            for (int j = theGameList.size()-31; j < theGameList.size()-1 ; j++) {
+            if (theGameList.size()<32)return 0;
+            old = theGameList.get(theGameList.size() - 31);
+            oldOld = theGameList.get(theGameList.size() - 32);
+            for (int j = theGameList.size()-32 + 2; j < theGameList.size()-2 ; j++) {
                 current=theGameList.get(j);
-                if (j==theGameList.size()-31){
-                    old=current;
-                }
-                next=theGameList.get(j+1);
-                if (current>200){//200 får bli minsta gränsen
-                    if (old<current&&current>next){
+                next = theGameList.get(j+1);
+                nextNext = theGameList.get(j+2);
+                if (current>50){//200 får bli minsta gränsen
+                    if (old<current && current>next && old>oldOld && next>nextNext){
                         peakCount++;
                     }
                 }
+                oldOld = old;
+                old = current;
             }
             return peakCount/(3.0/60.0);
         }
@@ -281,13 +193,9 @@ public class GameController {
         int maxRequiredBpm=120;
 
         if (minRequiredBpm<=currentFrequency&&maxRequiredBpm>=currentFrequency){
-            return calculatePointsByTime(5);
-        }else if(minRequiredBpm-20<=currentFrequency&&maxRequiredBpm+20>=currentFrequency){
-            return calculatePointsByTime(4);
-        }else if(minRequiredBpm-40<=currentFrequency&&maxRequiredBpm+40>=currentFrequency){
-            return calculatePointsByTime(3);
-        }else if(minRequiredBpm-60<=currentFrequency&&maxRequiredBpm+60>=currentFrequency){
             return calculatePointsByTime(2);
+        }else if(minRequiredBpm-20<=currentFrequency&&maxRequiredBpm+20>=currentFrequency) {
+            return calculatePointsByTime(1);
         }else{
             return calculatePointsByTime(0);
         }
