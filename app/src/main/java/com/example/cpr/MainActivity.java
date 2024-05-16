@@ -114,26 +114,29 @@ public class MainActivity extends BaseActivity {
 
             byte[] data = characteristic.getValue();
 
-            String s = new String(data, StandardCharsets.UTF_8);
+            String dataString = new String(data, StandardCharsets.UTF_8);
 
-            //ascii to int
-            int value = (s.charAt(0) - 48) * 100 + (s.charAt(1) - 48) * 10 + (s.charAt(2) - 48);
+            try {
+                // Try parsing the string directly to an integer
+                int value = Integer.parseInt(dataString.trim()); // Trim any whitespace
 
-            Log.d("test1", "" + value);
+                Log.d("test1", "Received value: " + value);
 
+                // Send the value to the server
+                sendApi.send(value).enqueue(new Callback<Integer>() {
+                    @Override
+                    public void onResponse(Call<Integer> call, Response<Integer> response) {
+                        Log.d("test1", "Save successful");
+                    }
 
-            Log.d("test1", "" + value);
-            sendApi.send(value).enqueue(new Callback<Integer>() {
-                @Override
-                public void onResponse(Call<Integer> call, Response<Integer> response) {
-                    Log.d("test1", "Save successful");
-                }
-
-                @Override
-                public void onFailure(Call<Integer> call, Throwable t) {
-                    Log.d("test1", "Save failed");
-                }
-            });
+                    @Override
+                    public void onFailure(Call<Integer> call, Throwable t) {
+                        Log.d("test1", "Save failed");
+                    }
+                });
+            } catch (NumberFormatException e) {
+                Log.e("MainActivity", "Failed to parse integer from received data: " + dataString, e);
+            }
 
 
         }
