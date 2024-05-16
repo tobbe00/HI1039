@@ -8,6 +8,56 @@
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>PRODJECT CPR website</title>
     <link rel="stylesheet" href="gamestyle.css">
+    <style>
+        #gameOverPopup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 2px solid black;
+            padding: 20px;
+            z-index: 1000;
+            text-align: center;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        #gameOverPopup button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #gameOverPopup button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        margin: 5px;  
+        }
+
+        #gameOverPopup button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        margin: 5px;  
+        
+    }
+    </style>
     
     
 </head>
@@ -41,8 +91,16 @@
         </div>
     </nav>
         <!--here comes the game section-->
-       
+       <!-- Game Over Popup -->
+    <div id="gameOverPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 2px solid black; padding: 20px; z-index: 1000; text-align: center; width: 300px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px;">
+    <h2>Game Over!</h2>
+    <button onclick="restartGame()">Restart</button>
+    <button onclick="exitGame()">Exit</button>
+    <button onclick="saveGame()">Save</button>
+    
+    </div>
 
+        <script src="gameFetch.js"></script>
         <script src="game.js"></script>
         
 </body>
