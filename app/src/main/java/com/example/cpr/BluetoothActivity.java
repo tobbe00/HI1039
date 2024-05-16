@@ -55,6 +55,9 @@ public class BluetoothActivity extends BaseActivity {
     private DeviceListAdapter deviceListAdapter;
     private ListView deviceListView;
 
+    public static final int REQUEST_ENABLE_BT = 1000;
+    public static final int REQUEST_ACCESS_LOCATION = 1001;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +112,8 @@ public class BluetoothActivity extends BaseActivity {
         });
 
 
+
+
         /*checkConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,6 +140,12 @@ public class BluetoothActivity extends BaseActivity {
                 }
             }
         });*/
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initBLE();
     }
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -262,5 +273,45 @@ public class BluetoothActivity extends BaseActivity {
             Log.i("test1", "onScanFailed"+errorCode);
         }
     };
+
+    private void initBLE() {
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            finish();
+        } else {
+            // Access Location is a "dangerous" permission
+            int hasAccessLocation = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION);
+            if (hasAccessLocation != PackageManager.PERMISSION_GRANTED) {
+                // ask the user for permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_ACCESS_LOCATION);
+                // the callback method onRequestPermissionsResult gets the result of this request
+            }
+        }
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        // turn on BT
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivity(enableBtIntent);
+        }
+    }
+
+    // callback for Activity.requestPermissions
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_ACCESS_LOCATION) {
+            // if request is cancelled, the results array is empty
+            if (grantResults.length == 0
+                    || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                // stop this activity
+                this.finish();
+            }
+        }
+    }
 
 }
