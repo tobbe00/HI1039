@@ -174,6 +174,7 @@ public class BluetoothActivity extends BaseActivity {
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
             if (newState == BluetoothGatt.STATE_CONNECTED) {
+
                 mBluetoothGatt = gatt;
                 mHandler.post(new Runnable() {
                     public void run() {
