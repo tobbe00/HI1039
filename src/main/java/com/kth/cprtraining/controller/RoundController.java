@@ -1,9 +1,11 @@
 package com.kth.cprtraining.controller;
 
 import com.kth.cprtraining.dto.LeaderboardDTO;
+import com.kth.cprtraining.dto.RoundDTO;
 import com.kth.cprtraining.dto.RoundFromWebDTO;
-import com.kth.cprtraining.model.Round;
 import com.kth.cprtraining.service.RoundService;
+import com.kth.cprtraining.repository.UserRepository;
+import com.kth.cprtraining.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,12 +15,47 @@ import java.util.List;
 @RestController
 @RequestMapping("/rounds")
 public class RoundController {
-    private RoundService roundService;
 
-    public RoundController(RoundService roundService){
-         this.roundService = roundService;
+    private final RoundService roundService;
+    private final UserRepository userRepository;
+
+    public RoundController(RoundService roundService, UserRepository userRepository) {
+        this.roundService = roundService;
+        this.userRepository = userRepository;
     }
-    @PostMapping
+
+    @PostMapping("/saveRound")
+    public ResponseEntity<Boolean> createRound2(@RequestBody RoundFromWebDTO roundFromWebDTO){
+        System.out.println("Received request to save round: " + roundFromWebDTO);
+        RoundDTO roundDTO = convertFromWebDtoToRoundDto(roundFromWebDTO);
+        System.out.println("Converted roundfromwebdto to roundDTO: " + roundDTO);
+
+        // Retrieve theGameList somehow (e.g., from a session or other storage)
+        List<Integer> theGameList = GameController.theGameList;
+
+        // Call the service method with the converted DTO
+        boolean status = roundService.saveRoundWithPressures(roundDTO, theGameList);
+        return new ResponseEntity<>(status, HttpStatus.CREATED);
+    }
+
+    private RoundDTO convertFromWebDtoToRoundDto(RoundFromWebDTO roundFromWebDTO) {
+        User user = userRepository.findUserByEmail(roundFromWebDTO.getEmail());
+        return RoundDTO.builder()
+                .points(roundFromWebDTO.getPoints())
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .build();
+    }
+
+
+    @GetMapping
+    public List<LeaderboardDTO> getLeaderboardTop100() {
+        return roundService.getLeaderboardTop100();
+    }
+}
+
+
+    /*@PostMapping
     public ResponseEntity<Boolean> createRound(@RequestBody Round round){
         boolean status = false;
 
@@ -26,27 +63,5 @@ public class RoundController {
             status = true;
         }
         return new ResponseEntity<>(status, HttpStatus.CREATED);
-    }
-    @PostMapping("/saveRound")
-    public ResponseEntity<Boolean> createRound2(@RequestBody RoundFromWebDTO roundFromWebDTO){
-        boolean status = false;
+    }*/
 
-        if(roundService.saveRoundFromWeb(roundFromWebDTO)){
-            status = true;
-        }
-        return new ResponseEntity<>(status, HttpStatus.CREATED);
-    }
-
-
-
-    @GetMapping//by id
-    public List<LeaderboardDTO> getLeaderboardTop100(){
-        // return userService.getUserById(id); detta e med geduserbyid efter kommer nr2 med optional
-        /*List<LeaderboardDTO> leaderboardList=new ArrayList<>();
-        leaderboardList=roundService.fillLeaderboard();
-        return leaderboardList;
-         */
-        return roundService.getLeaderboardTop100();
-    }
-    
-}

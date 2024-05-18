@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +23,17 @@ import java.util.List;
 @RequestMapping("/game")
 public class GameController {
     int pressureId =0;
+    private Instant gameStartTime;
+    private Instant gameEndTime;
 
-    List<Integer> theGameList =new ArrayList<>();
+    public static List<Integer> theGameList =new ArrayList<>();
 
     List<Integer> pointsList=new ArrayList<>();
     ExtremePointDTO mostRecentExtremePoints=new ExtremePointDTO();
     PointDTO mostRecentPoint=new PointDTO();
     int zeroPoint;
     int avgPressure;
+    int scaling;
     boolean gameStart=false;
     boolean gameEnd=false;
 
@@ -95,21 +100,17 @@ public class GameController {
 
         if (started){
             theGameList.clear();
-
             pressureId = 0;
-
+            gameStartTime = Instant.now();
+            gameEnd = false;
+            gameStart=started;
         }
-        gameEnd = false;
-        gameStart=started;
-
-
         System.out.println("gameStart is:"+ gameStart);
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
 
     @GetMapping("/gamestart")//by id
     public boolean sendGameStart(){
-
         return gameStart;
     }
 
@@ -119,12 +120,15 @@ public class GameController {
         boolean ended = Boolean.parseBoolean(gameHasEnded);
         //remember to save thegamelist om vi ska ha den i databasen
         if (ended){
-            //spara gamelist
+            gameEndTime = Instant.now();
+            long durationInSeconds = Duration.between(gameStartTime, gameEndTime).getSeconds();
+            System.out.println("Game duration: " + durationInSeconds + " seconds");
+            System.out.println("ended");
+            gameStart = false;
+            gameEnd = ended;
         }
 
-        System.out.println("ended");
-        gameStart = false;
-        gameEnd = ended;
+
 
         return new ResponseEntity<>(true,HttpStatus.CREATED);
     }
@@ -137,10 +141,10 @@ public class GameController {
 
 
     public Integer handleBatch2(Integer pressure){
-        pressure = pressure-zeroPoint;
-        if(pressure<20
-
-        ) pressure = 0;
+        scaling = 200 / avgPressure;
+        pressure = (pressure-zeroPoint) * scaling;
+        System.out.println(pressure);
+        if(pressure<20) pressure = 0;
         return pressure;
     }
 
