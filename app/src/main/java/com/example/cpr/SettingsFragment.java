@@ -15,7 +15,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
 
-        EditTextPreference ipaddressPreference = findPreference("ipaddress");
+        EditTextPreference ipaddressPreference = findPreference("url");
         if (ipaddressPreference != null) {
 
             if(LoginActivity.getUrl()!=null){

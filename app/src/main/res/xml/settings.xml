@@ -2,9 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <EditTextPreference
-        app:key="ipaddress"
-        app:title="IP address"
-        app:summary="Enter the servers IP address"
+        app:key="url"
+        app:title="Servers URL"
+        app:summary="Enter the servers URL"
         app:defaultValue=""/>
 
 </PreferenceScreen>
