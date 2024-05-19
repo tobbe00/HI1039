@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,7 +39,7 @@ import retrofit2.Response;
 
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     private EditText editTextUsername, editTextPassword;
     private TextView connectionView;
@@ -51,8 +53,19 @@ public class LoginActivity extends AppCompatActivity {
 
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
-    public static String url = "http://192.168.10.124:8080";
 
+
+
+    private static String url = "http://130.229.185.97:8080";
+
+    public static String getUrl() {
+        return url;
+    }
+
+
+    public static void setUrl(String url) {
+        LoginActivity.url = "http://"+url+":8080";
+    }
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -185,6 +198,14 @@ public class LoginActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    protected void adjustMenu(Menu menu) {
+        MenuItem logoutItem = menu.findItem(R.id.logout);
+        if (logoutItem != null) {
+            logoutItem.setVisible(false); // Hide the logout item
+        }
     }
 
 }

@@ -210,7 +210,6 @@ public class BluetoothActivity extends BaseActivity {
                 mBluetoothAdapter.getBluetoothLeScanner();
         if (enable) {
             if (!mScanning) {
-                // stop scanning after a pre-defined scan period, SCAN_PERIOD
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {

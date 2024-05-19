@@ -44,9 +44,6 @@ public class MainActivity extends BaseActivity {
     private TextView countdownText;
     private SendApi sendApi;
     private final BluetoothGattCallback mBtGattCallback = new BluetoothGattCallback() {
-        //temporary for debug purposes
-        int count = 0;
-        int batchId = 0;
 
         @Override
         public void onServicesDiscovered(final BluetoothGatt gatt, int status) {
@@ -174,7 +171,7 @@ public class MainActivity extends BaseActivity {
         restartButton.setVisibility(View.GONE);
         batch = new ArrayList<>();
 
-        RetrofitService retrofitService = new RetrofitService(LoginActivity.url);
+        RetrofitService retrofitService = new RetrofitService(LoginActivity.getUrl());
 
         sendApi = retrofitService.getRetrofit().create(SendApi.class);
 
