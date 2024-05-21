@@ -102,16 +102,6 @@ searchButton.onclick=function(){
    
 }
 
-/*$(document).ready(function() {
-    $('#search-button').click(function() {
-        
-        
-            // Redirect to graph.html with roundId as a query parameter
-            //
-       
-    });
-});*/
-
 
 
 
