@@ -91,15 +91,39 @@ function buildTable(data){
 }
 
 
-searchButton.onclick=function(){
-    roundId = document.getElementById('searchInput').value
-    console.log(roundId);
-    if(roundId.trim() !== ''){
-        window.location.href = `graph.html?roundId=${roundId}`;
-    }else{
-        alert("Please enter a valid Round ID")
+searchButton.onclick= async function(){
+    let roundId = document.getElementById('searchInput').value
+    console.log("Round input: "+ roundId);
+
+    try{
+        let roundExists = await checkIfRoundExists(roundId);
+        console.log('Round exists:', roundExists);
+        if(roundExists){
+            window.location.href = `graph.html?roundId=${roundId}`;
+        }else{
+            alert("Please enter a valid Round ID")
+        }
+    }catch(error ){
+        console.log(error);
     }
+    
    
+}
+
+ function checkIfRoundExists(roundId) {
+    return fetch(`http://localhost:8080/rounds/getRoundById?roundId=${roundId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            return data;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
 }
 
 

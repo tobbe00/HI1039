@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const roundId = urlParams.get('roundId');
 
     if (roundId) {
-        // Use the roundId to fetch data and render the graph
         fetchPressureData(roundId);
     } else {
         console.log('Round ID not found in url');
@@ -42,7 +41,7 @@ function fetchPressureData(roundId) {
     fetch(`http://localhost:8080/rounds/pressures/${roundId}`)
         .then(response => response.json())
         .then(pressureData => {
-            console.log(`Pressure Data for Round ${roundId}:`, pressureData); // Debugging: Log fetched data
+            console.log(`Pressure Data for Round ${roundId}:`, pressureData);
             renderChart(pressureData);
         })
         .catch(error => console.error(`Error fetching pressure data for Round ${roundId}:`, error));
