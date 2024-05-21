@@ -1,0 +1,181 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Kumbh Sans', sans-serif;
+}
+
+body {
+    background-image: url('images/BackgroundX.jpg'); /* Path to your background image */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Optional: Makes the background fixed during scrolling */
+}
+
+.navbar{
+    background: #131313;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.navbar__container{
+    display: flex;
+    justify-content: space-between;
+    height: 80px;
+    z-index: 1;
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 50px;
+}
+
+#navbar__logo{
+    background-color: #ff8177;
+    background-image: linear-gradient(to top, #ff0844 0%, #ffb199 100%);
+    background-size: 100%;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 2rem;
+}
+
+.fa-gem{
+    margin-right: 0.5rem;
+}
+
+.navbar__menu {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    text-align: center;
+}
+
+.navbar__item{
+    height: 80px;
+}
+
+.navbar__links{
+    color: #ffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding: 0 1rem;
+    height: 100%;
+}
+
+.navbar__btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 1rem;
+    width: 100%;
+}
+
+.button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 10px 20px;
+    height: 100%;
+    width: 100%;
+    border: none;
+    outline: none;
+    border-radius: 4px;
+    background: #f77062;
+    color: #fff;
+}
+
+.button:hover, .navbar__links:hover{
+    background: #4837ff;
+    color: #f77062;
+    transition: all 0.3s ease;
+}
+.game-selection {
+    text-align: center;
+    margin-top: 20px;
+    background-color: #fff; /* White background */
+    padding: 20px; /* Padding around the content */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+    width: 100%; /* Adjust width as necessary */
+    margin: 40px auto; /* Center the box horizontally and add spacing */
+}
+
+.input-fields {
+    display: flex;
+    flex-direction: column; /* Stack the inputs vertically */
+    align-items: center; /* Center-align the input fields */
+    gap: 10px; /* Space between each field */
+}
+
+.input-field, .input-field div {
+    width: 100%; /* Full width for responsiveness */
+}
+
+input[type="number"], select {
+    width: 100%; /* Ensures inputs take full width available */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#btnStart-game {
+    padding: 10px 20px;
+    background-color: #166ecd;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 30px; /* Increase this value to push the button further down */
+}
+
+/* Hover effect for the button */
+#btnStart-game:hover {
+    background-color: #0056b3;
+}
+
+
+@media screen and (max-width: 960px){
+    .navbar__container,
+    .navbar__menu.active,
+    .navbar__menu{
+        display: flex;
+        justify-content: space-between;
+        height: 80px;
+        z-index: 1;
+        width: 100%;
+        padding: 0;
+        background: #131313; /* Ensure the background matches */
+    }
+
+    .navbar__toggle .bar{
+        width: 25px;
+        height: 3px;
+        margin: 5px auto;
+        transition: all 0.3s ease-in-out;
+        background: #fff;
+    }
+
+    .navbar__item, .navbar__links, .button{
+        width: 100%;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .navbar__btn{
+        padding-bottom: 2rem;
+    }
+}

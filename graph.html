@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>PROJECT CPR - Graphs</title>
+    <link rel="stylesheet" href="infostyle.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar__container">
+            <a href="/index.html" id="navbar__logo">PROJECT CPR</a>
+            <div class="navbar__toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="navbar__menu">
+                <li class="navbar__item">
+                    <a href="/index.html" class="navbar__links">Home</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="/game.html" class="navbar__links">Game</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="/info.html" class="navbar__links">Stats</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="/graph.html" class="navbar__links">Graph</a> <!-- Ensure this is highlighted if needed -->
+                </li>
+                <li class="navbar__btn">
+                    <a href="/login.html" class="button">Sign up</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="main">
+        <div class="graph-section">
+            <h2>Graph Display</h2>
+            <button id="loadGraph-button">Load Graph</button>
+            <!-- Placeholder where graphs will be rendered -->
+            <div id="chart"></div>
+        </div>
+    </div>
+
+    <script src="graph.js"></script> <!-- Script to handle graph loading -->
+</body>
+</html>

@@ -50,10 +50,6 @@ function fetchFromApi(url) {
       gameEnded = !!data;
     });
   }
-  // Fetch data every 0.1 seconds 1000=1s
-  setInterval(fetchData, 100);
-  
-
 
 function saveRound(){
     // Define the data to send
@@ -83,6 +79,8 @@ function saveRound(){
 
 }
 
+// Fetch data every 0.1 seconds 1000=1s
+setInterval(fetchData, 100);
 
 //freq=data.frequency;
                 //upperPoints=data.pointsMax;//ska flyttas

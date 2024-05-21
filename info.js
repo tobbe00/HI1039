@@ -33,6 +33,15 @@ $.ajax({
         
     }
 })
+//https://reqres.in/api/users
+$.ajax({
+    method:'GET',
+    url:'http://localhost:8080/rounds/pressures',
+    success:function(response){
+        console.log('Pressures data:', response);
+        
+    }
+})
 
 
 function searchTable(value, data ){
