@@ -13,7 +13,7 @@ let navbarBtn = document.querySelector('.navbar__btn');
 if(sessionStorage.getItem("isLoggedIn")=="true"){
     console.log(sessionStorage.getItem("isLoggedIn"));
     //signedIn.innerHTML="signed in";
-    navbarBtn.innerHTML = "<a href='/HI1039/signOut.html' class='button'>sign out</a>"
+    navbarBtn.innerHTML = "<a href='/signOut.html' class='button'>sign out</a>"
 }
 
 //page specific
@@ -69,6 +69,7 @@ function buildTable(data){
     table.innerHTML='';
     for (var i = 0; i < data.length; i++){
         var row = `<tr>
+                        <td>${data[i].roundId}</td>
                         <td>${data[i].username}</td>
                         <td>${data[i].rank}</td>
                         <td>${data[i].points}</td>

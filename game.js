@@ -13,7 +13,7 @@ let navbarBtn = document.querySelector('.navbar__btn');
 if(sessionStorage.getItem("isLoggedIn")=="true"){
     console.log(sessionStorage.getItem("isLoggedIn"))
     //signedIn.innerHTML="signed in";
-    navbarBtn.innerHTML = "<a href='/HI1039/signOut.html' class='button'>sign out</a>"
+    navbarBtn.innerHTML = "<a href='/signOut.html' class='button'>sign out</a>"
 }
 //let zeroPoint = parseInt(sessionStorage.getItem("zeroPoint"));
 //console.log('Original zeroPoint:', zeroPoint);
@@ -40,7 +40,7 @@ var canvasHeight = window.innerHeight - navbarHeight;
 
 zeroPoint = 500;
 var upperGreenZoneY = 300; 
-var lowerGreenZoneY = 500;
+var lowerGreenZoneY = 450;
 
 
 function startGame() {
@@ -50,7 +50,7 @@ function startGame() {
     myBackGround = new backgroundComponent(-3, window.innerWidth, canvasHeight, backgroundImages[currentBackgroundIndex], 0, 0, "image");
 
     greenZoneUpper.push(new component(-3, window.innerWidth*3, 100, "rgba(0, 255, 0, 0.9)", 0, upperGreenZoneY, "color  "));
-    greenZoneLower.push(new component(-3, window.innerWidth*3, 70, "rgba(0, 255, 0, 0.9)", 0, lowerGreenZoneY-50, "color"));
+    greenZoneLower.push(new component(-3, window.innerWidth*3, 70, "rgba(0, 255, 0, 0.9)", 0, lowerGreenZoneY, "color"));
     myButton = new button('test', '#eeaa00', '#001122',0,100,100,50)
     myGameArea.start();
 }
@@ -181,7 +181,7 @@ function updateGameArea() {
         if (currentNum >= 0 && currentNum < testNumbers.length) {
             let targetY = zeroPoint - testNumbers[currentNum];
             
-           /*if (myGamePiece.y > targetY) {
+           if (myGamePiece.y > targetY) {
                 myGamePiece.speedY = -10;
                 if (myGamePiece.speedY > 0) {
                     currentNum += 1;
@@ -198,9 +198,9 @@ function updateGameArea() {
             
             if (currentNum >= testNumbers.length) {
                 currentNum = 0;
-            }*/
+            }
 
-            myGamePiece.y=targetY;
+            //myGamePiece.y=targetY;
         }
         
         if (myGameArea.frameNo == 1 || everyinterval(2)) {
@@ -270,7 +270,7 @@ function updateGameArea() {
         
         
     }
-    drawLine(lowerGreenZoneY+20);
+    drawLine(lowerGreenZoneY+70);
     myGamePiece.newPos();
     myGamePiece.update();
     showTotPoints();
