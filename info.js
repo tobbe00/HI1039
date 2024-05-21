@@ -13,7 +13,7 @@ let navbarBtn = document.querySelector('.navbar__btn');
 if(sessionStorage.getItem("isLoggedIn")=="true"){
     console.log(sessionStorage.getItem("isLoggedIn"));
     //signedIn.innerHTML="signed in";
-    navbarBtn.innerHTML = "<a href='/HI1039/signOut.html' class='button'>sign out</a>"
+    navbarBtn.innerHTML = "<a href='/signOut.html' class='button'>sign out</a>"
 }
 
 //page specific
@@ -30,6 +30,15 @@ $.ajax({
         console.log(myArray);
         buildTable(myArray)
         console.log(response);
+        
+    }
+})
+//https://reqres.in/api/users
+$.ajax({
+    method:'GET',
+    url:'http://localhost:8080/rounds/pressures',
+    success:function(response){
+        console.log('Pressures data:', response);
         
     }
 })

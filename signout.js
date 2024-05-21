@@ -11,7 +11,7 @@ let navbarBtn = document.querySelector('.navbar__btn');
 if(sessionStorage.getItem("isLoggedIn")=="true"){
     console.log(sessionStorage.getItem("isLoggedIn"))
     //signedIn.innerHTML="signed in";
-    navbarBtn.innerHTML = "<a href='/HI1039/login.html' class='button'>signed in</a>"
+    navbarBtn.innerHTML = "<a href='/login.html' class='button'>signed in</a>"
 }
 //page specific-----------------------------------------------------------------------------------
 if(sessionStorage.getItem("isLoggedIn")){
@@ -48,6 +48,6 @@ function popUpHome(){
     
     const confirmed = window.confirm('You are signed out. go to home page?');
     if (confirmed) {
-        window.location.href="/HI1039/index.html"
+        window.location.href="/index.html"
     }
 }

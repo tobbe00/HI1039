@@ -1,10 +1,12 @@
 const menu=document.querySelector('#mobile-menu');
 const menuLinks=document.querySelector('.navbar__menu');
-
+function showGameOverPopup() {
+    document.getElementById('gameOverPopup').style.display = 'block';
+}
 menu.addEventListener('click',function(){
     menu.classList.toggle('is-active');
     menuLinks.classList.toggle('active');
-})
+});
 
 let signedIn=document.getElementById("signupBtn2");
 let navbarBtn = document.querySelector('.navbar__btn');
