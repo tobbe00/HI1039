@@ -82,6 +82,7 @@ public class RoundServiceImpl implements RoundService {
             dto.setUsername(round.getUsername());
             dto.setPoints(round.getPoints());
             dto.setRank(i++);
+            dto.setRoundId(round.getRoundId());
             leaderboardDTOs.add(dto);
         }
         return leaderboardDTOs;

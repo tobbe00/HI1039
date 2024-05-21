@@ -46,12 +46,12 @@ public class RoundController {
         return roundDTO;
     }
 
-    @GetMapping("/pressures")
-    public ResponseEntity<List<Integer>> getPressuresForRound() {
-        Long testRoundId = Long.valueOf(32);
-        List<Integer> pressures = roundService.getPressuresForRound(testRoundId);
+    @GetMapping("/pressures/{roundsId}")
+    public ResponseEntity<List<Integer>> getPressuresForRound(@PathVariable("roundsId") Long roundsId) {
+        List<Integer> pressures = roundService.getPressuresForRound(roundsId);
         return new ResponseEntity<>(pressures, HttpStatus.OK);
     }
+    
     @GetMapping
     public List<LeaderboardDTO> getLeaderboardTop100() {
         return roundService.getLeaderboardTop100();

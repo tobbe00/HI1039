@@ -14,6 +14,7 @@ public class LeaderboardDTO {
     private String username;
     private int points;
     private int rank;
+    private long roundId;
 
 
 }
