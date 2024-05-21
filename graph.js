@@ -15,7 +15,17 @@ document.addEventListener('DOMContentLoaded', function () {
         navbarBtn.innerHTML = "<a href='/signOut.html' class='button'>Sign out</a>";
     }
 
-    const loadGraphButton = document.getElementById('loadGraph-button');
+    const urlParams = new URLSearchParams(window.location.search);
+    const roundId = urlParams.get('roundId');
+
+    if (roundId) {
+        // Use the roundId to fetch data and render the graph
+        fetchPressureData(roundId);
+    } else {
+        console.log('Round ID not found in url');
+    }
+
+    /*const loadGraphButton = document.getElementById('loadGraph-button');
     loadGraphButton.addEventListener('click', function() {
         fetch('http://localhost:8080/rounds/pressures')
             .then(response => response.json())
@@ -24,8 +34,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 renderChart(pressureData);
             })
             .catch(error => console.error('Error fetching the pressure data:', error));
-    });
+    });*/
 });
+
+function fetchPressureData(roundId) {
+    // Fetch data for the specified roundId and render the graph
+    fetch(`http://localhost:8080/rounds/pressures/${roundId}`)
+        .then(response => response.json())
+        .then(pressureData => {
+            console.log(`Pressure Data for Round ${roundId}:`, pressureData); // Debugging: Log fetched data
+            renderChart(pressureData);
+        })
+        .catch(error => console.error(`Error fetching pressure data for Round ${roundId}:`, error));
+}
 
 // Render the chart with fetched data
 function renderChart(pressureData) {

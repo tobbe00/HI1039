@@ -19,6 +19,7 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
 //page specific
 
 var myArray = []
+let searchButton=document.getElementById("searchButton");
 
 
 //https://reqres.in/api/users
@@ -88,6 +89,29 @@ function buildTable(data){
 
     }
 }
+
+
+searchButton.onclick=function(){
+    roundId = document.getElementById('searchInput').value
+    console.log(roundId);
+    if(roundId.trim() !== ''){
+        window.location.href = `graph.html?roundId=${roundId}`;
+    }else{
+        alert("Please enter a valid Round ID")
+    }
+   
+}
+
+/*$(document).ready(function() {
+    $('#search-button').click(function() {
+        
+        
+            // Redirect to graph.html with roundId as a query parameter
+            //
+       
+    });
+});*/
+
 
 
 
