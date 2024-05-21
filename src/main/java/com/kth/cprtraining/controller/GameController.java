@@ -23,8 +23,7 @@ import java.util.List;
 @RequestMapping("/game")
 public class GameController {
     int pressureId =0;
-    private Instant gameStartTime;
-    private Instant gameEndTime;
+
 
     public static List<Integer> theGameList =new ArrayList<>();
 
@@ -101,7 +100,6 @@ public class GameController {
         if (started){
             theGameList.clear();
             pressureId = 0;
-            gameStartTime = Instant.now();
             gameEnd = false;
             gameStart=started;
         }
@@ -120,9 +118,6 @@ public class GameController {
         boolean ended = Boolean.parseBoolean(gameHasEnded);
         //remember to save thegamelist om vi ska ha den i databasen
         if (ended){
-            gameEndTime = Instant.now();
-            long durationInSeconds = Duration.between(gameStartTime, gameEndTime).getSeconds();
-            System.out.println("Game duration: " + durationInSeconds + " seconds");
             System.out.println("ended");
             gameStart = false;
             gameEnd = ended;
@@ -142,7 +137,7 @@ public class GameController {
 
     public Integer handleBatch2(Integer pressure){
         scaling = 200 / avgPressure;
-        pressure = (pressure-zeroPoint) * scaling;
+        pressure = Math.abs((zeroPoint - pressure)) * scaling;
         System.out.println(pressure);
         if(pressure<20) pressure = 0;
         return pressure;

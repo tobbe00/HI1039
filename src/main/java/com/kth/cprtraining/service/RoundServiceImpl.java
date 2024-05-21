@@ -11,7 +11,6 @@ import com.kth.cprtraining.repository.PressureDataRepository;
 import com.kth.cprtraining.repository.RoundRepository;
 import com.kth.cprtraining.repository.UserRepository;
 
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +20,11 @@ import java.util.Optional;
 
 @Service
 public class RoundServiceImpl implements RoundService {
-    private RoundRepository roundRepository;
-    private PressureDataRepository pressureDataRepository;
-    private Mapper<Round, RoundDTO> mapper;
-    private UserRepository userRepository;
+
+    private final RoundRepository roundRepository;
+    private final PressureDataRepository pressureDataRepository;
+    private final Mapper<Round, RoundDTO> mapper;
+    private final UserRepository userRepository;
 
     @Autowired
     public RoundServiceImpl(RoundRepository roundRepository, Mapper<Round, RoundDTO> mapper, UserRepository userRepository, PressureDataRepository pressureDataRepository) {
@@ -44,6 +44,20 @@ public class RoundServiceImpl implements RoundService {
     public RoundDTO findRoundById(Long roundId) {
         Optional<Round> opt = roundRepository.findById(roundId);
         return opt.map(mapper::mapToDTO).orElse(null);
+    }
+
+    @Override
+    public List<Integer> getPressuresForRound(Long roundId) {
+        Optional<Round> roundOpt = roundRepository.findById(roundId);
+        if (roundOpt.isPresent()) {
+            List<PressureData> pressureDataList = pressureDataRepository.findByRound(roundOpt.get());
+            if (!pressureDataList.isEmpty()) {
+                // Assuming there is only one PressureData per roundId
+                PressureData pressureData = pressureDataList.get(0);
+                return pressureData.getPressuresAsList();
+            }
+        }
+        return new ArrayList<>();
     }
 
     @Override
@@ -89,8 +103,8 @@ public class RoundServiceImpl implements RoundService {
         }
         return false;
     }
-
 }
+
 
 
     /*@Override

@@ -6,28 +6,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "pressuredata") // Ensure the table name matches your database table
+@Table(name = "pressuredata")
 public class PressureData {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "round_id", nullable = false)
     private Round round;
 
-    @Column(name = "pressures")
+    @Column(name = "pressures", columnDefinition = "TEXT")
     private String pressures;
 
-    // Use this method to set pressures from a list
-    public void setPressuresFromList(List<Integer> pressureList) {
-        this.pressures = pressureList.stream()
+    // Constructors, getters, setters
+
+    public void setPressuresFromList(List<Integer> pressures) {
+        this.pressures = pressures.stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
     }
 
-    // Use this method to get pressures as a list
     public List<Integer> getPressuresAsList() {
         return Arrays.stream(this.pressures.split(","))
                 .map(Integer::parseInt)

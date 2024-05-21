@@ -25,10 +25,10 @@ public class RoundController {
     }
 
     @PostMapping("/saveRound")
-    public ResponseEntity<Boolean> createRound2(@RequestBody RoundFromWebDTO roundFromWebDTO){
+    public ResponseEntity<Boolean> createRound2(@RequestBody RoundFromWebDTO roundFromWebDTO) {
         System.out.println("Received request to save round: " + roundFromWebDTO);
         RoundDTO roundDTO = convertFromWebDtoToRoundDto(roundFromWebDTO);
-        System.out.println("Converted roundfromwebdto to roundDTO: " + roundDTO);
+        System.out.println("Converted roundfromwebdto " + roundFromWebDTO);
 
         // Retrieve theGameList somehow (e.g., from a session or other storage)
         List<Integer> theGameList = GameController.theGameList;
@@ -39,15 +39,19 @@ public class RoundController {
     }
 
     private RoundDTO convertFromWebDtoToRoundDto(RoundFromWebDTO roundFromWebDTO) {
-        User user = userRepository.findUserByEmail(roundFromWebDTO.getEmail());
-        return RoundDTO.builder()
-                .points(roundFromWebDTO.getPoints())
-                .userId(user.getUserId())
-                .username(user.getUsername())
-                .build();
+        RoundDTO roundDTO = new RoundDTO();
+        roundDTO.setPoints(roundFromWebDTO.getPoints());
+        roundDTO.setUserId(userRepository.findUserByEmail(roundFromWebDTO.getEmail()).getUserId());
+        roundDTO.setUsername(userRepository.findUserByEmail(roundFromWebDTO.getEmail()).getUsername());
+        return roundDTO;
     }
 
-
+    @GetMapping("/pressures")
+    public ResponseEntity<List<Integer>> getPressuresForRound() {
+        Long testRoundId = Long.valueOf(32);
+        List<Integer> pressures = roundService.getPressuresForRound(testRoundId);
+        return new ResponseEntity<>(pressures, HttpStatus.OK);
+    }
     @GetMapping
     public List<LeaderboardDTO> getLeaderboardTop100() {
         return roundService.getLeaderboardTop100();
