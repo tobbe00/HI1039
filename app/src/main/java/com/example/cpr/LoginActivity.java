@@ -79,13 +79,14 @@ public class LoginActivity extends BaseActivity {
         buttonLogin = findViewById(R.id.buttonLogin);
         connectionView = findViewById(R.id.connectionText);
 
-        RetrofitService retrofitService = new RetrofitService(url);
-        LoginApi loginApi = retrofitService.getRetrofit().create(LoginApi.class);
+
 
         // Set a click listener for the login button
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                RetrofitService retrofitService = new RetrofitService(url);
+                LoginApi loginApi = retrofitService.getRetrofit().create(LoginApi.class);
                 // Retrieve entered username and password
                 testConnection(url);
 
@@ -114,7 +115,7 @@ public class LoginActivity extends BaseActivity {
 
                                         JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
                                         String success = jsonObject.get("success").getAsString();
-
+                                        Log.d("test1",success);
                                         if (success.equals("true")) {
                                             //Log.d("test1", "Successfully logged in");
                                             Intent intent = new Intent(LoginActivity.this, BluetoothActivity.class);
