@@ -56,6 +56,20 @@ public class RoundController {
     public List<LeaderboardDTO> getLeaderboardTop100() {
         return roundService.getLeaderboardTop100();
     }
+
+    @GetMapping("/getRoundById")
+    public Boolean checkIfRoundExists(@RequestParam String roundId) {
+        Long roundID = Long.parseLong(roundId);
+
+        RoundDTO roundDTO =roundService.findRoundById(roundID);
+        if(roundDTO!=null){
+            System.out.println(true);
+            return true;
+        }
+        
+        System.out.println(false);
+        return false;
+    }
 }
 
 
