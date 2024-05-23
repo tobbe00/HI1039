@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>PRODJECT CPR website</title>
@@ -49,41 +50,88 @@
                 th {
                     color: #fff;
                 }
+        
+                #myTable tr {
+                    cursor: pointer;
+                    /* Change cursor to pointer when hovering over a row */
+                    transition: background-color 0.3s;
+                    /* Smooth transition for background color */
+                }
+        
+                #myTable tr:hover {
+                    background-color: #f1f1f1;
+                    /* Change background color on hover */
+                }
+
+                #usersRoundTable tr {
+                    cursor: pointer;
+                    /* Change cursor to pointer when hovering over a row */
+                    transition: background-color 0.3s;
+                    /* Smooth transition for background color */
+                }
+        
+                #usersRoundTable tr:hover {
+                    background-color: #f1f1f1;
+                    /* Change background color on hover */
+                }
             </style>
 
             <div class="row">
                 <div class="col-md-8 offset-md-2">
                     <div class="card card-body mb-4">
-                        <p class="text-center">Display graph for game</p>
+                        <p class="text-center">Search for a round or click on a row to view the graph for a completed round</p>
                         <input id="searchInput" class="form-control" type="text" placeholder="Enter Round ID">
                         <button id="searchButton" class="btn btn-primary mt-2 btn-block">Search</button>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
-                    <div class="card card-body">
-                        <input id="search-input" class="form-control" type="text">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="tab1-tab" data-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Top Scores</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab2-tab" data-toggle="tab" href="#tab2" role="tab" aria-controls="tab2" aria-selected="false">My Rounds</a>
+                </li>
+            </ul>
 
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                    
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="card card-body">
+                                <input id="search-input" class="form-control" type="text">
+                            </div>
+                        </div>
                     </div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="bg-info">
+                                <th class="bg-info" data-colname="name" data-order="desc">Round ID &#9650</th>
+                                <th data-colname="age" data-order="desc">Name &#9650</th>
+                                <th data-colname="age" data-order="desc">Rank &#9650</th>
+                                <th data-colname="birthdate" data-order="desc">Points &#9650</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myTable"></tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="bg-info">
+                                <th class="bg-info" data-colname="name" data-order="desc">Round ID &#9650</th>
+                                <th data-colname="age" data-order="desc">Name &#9650</th>
+                                <th data-colname="birthdate" data-order="desc">Points &#9650</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersRoundTable"></tbody>
+                    </table>
                 </div>
             </div>
-            <table class="table table-striped">
-                <tr class="bg-info">
-                    <th class="bg-info" data-colname="name" data-order="desc">Round ID &#9650</th>
-                    <th data-colname="age" data-order="desc">Name &#9650</th>
-                    <th data-colname="age" data-order="desc">Rank &#9650</th>
-                    <th data-colname="birthdate" data-order="desc">points &#9650</th>
-                </tr>
-
-                <tbody id="myTable">
-
-                </tbody>
-            </table>
-
-
-        </div>
+        </div> 
 
 
 

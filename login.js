@@ -121,6 +121,8 @@ enterBtn.onclick=function(){
             },
             body: JSON.stringify({ email: emailToCheck, password: passwordToCheck })
         };
+
+
     
         // Making the fetch request
         fetch(url, requestBody)
@@ -168,6 +170,19 @@ function storeLoggedIn(){
         console.log("du är inloggad!");
         sessionStorage.setItem("email",email.value);
         sessionStorage.setItem("isLoggedIn",true);
+
+        fetch(`http://localhost:8080/users/username?email=${email.value}`)
+            .then(response => {
+                return response.json(); // Parse the response body as JSON
+            })
+            .then(data => {
+                console.log(data)
+                sessionStorage.setItem("username", data.username);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+        
     
 }
 

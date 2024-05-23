@@ -10,7 +10,7 @@ var toastDisplayDuration = 100; // Duration in milliseconds
 var toastTimestamp = 0;
 var currentBackgroundIndex = 0;
 var myGamePiece, myBackGround, myButton;
-var testNumbers = [0,0,200,0,0], myTrail = [], greenZoneUpper = [], greenZoneLower = [];
+var testNumbers = [], myTrail = [], greenZoneUpper = [], greenZoneLower = [];
 var currentNum = 0, currentGreenZone = 0, currentGreenZoneLower = 0;
 var gameStarted = false, gameEnded = false, needsReset = true;
 var navbarHeight = document.getElementById('navbarTot').offsetHeight;

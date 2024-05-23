@@ -20,20 +20,33 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
 
 var myArray = []
 let searchButton=document.getElementById("searchButton");
+let username = sessionStorage.getItem("username");
+console.log(sessionStorage.getItem("username"))
 
 
 //https://reqres.in/api/users
 $.ajax({
-    method:'GET',
-    url:'http://localhost:8080/rounds',
-    success:function(response){
-        myArray=response
-        console.log(myArray);
-        buildTable(myArray)
-        console.log(response);
-        
+    method: 'GET',
+    url: 'http://localhost:8080/rounds/leaderboard',
+    success: function(response) {
+        console.log("denna aropar jag");
+        myArray = response;
+        buildTable(myArray,'myTable');
     }
-})
+});
+
+// AJAX call for recentArray
+$.ajax({
+    method: 'GET',
+    url: `http://localhost:8080/rounds/getUsersRounds?username=${username}`,
+    success: function(response) {
+        console.log("denna anropar jag")
+        usersRoundsArray = response;
+        console.log(usersRoundsArray);
+        buildTable(usersRoundsArray, 'usersRoundTable');
+    }
+});
+
 //https://reqres.in/api/users
 $.ajax({
     method:'GET',
@@ -74,21 +87,38 @@ $('#search-input').on('keyup', function(){
 
 
 
-function buildTable(data){
-    var table = document.getElementById('myTable')
-    table.innerHTML='';
-    for (var i = 0; i < data.length; i++){
-        var row = `<tr>
-                        <td>${data[i].roundId}</td>
-                        <td>${data[i].username}</td>
-                        <td>${data[i].rank}</td>
-                        <td>${data[i].points}</td>
-                  </tr>`
-        table.innerHTML += row
-
-
+function buildTable(data,tableId) {
+    var table = document.getElementById(tableId);
+    table.innerHTML = '';
+    console.log("test");
+    for (var i = 0; i < data.length; i++) {
+        var row = document.createElement('tr');
+        if(tableId=='myTable'){
+            row.innerHTML = `
+            <td>${data[i].roundId}</td>
+            <td>${data[i].username}</td>
+            <td>${data[i].rank}</td>
+            <td>${data[i].points}</td>
+        `;
+        }else if(tableId==`usersRoundTable`){
+            
+            row.innerHTML = `
+            <td>${data[i].roundId}</td>
+            <td>${data[i].username}</td>
+            <td>${data[i].points}</td>
+            `;
+        }
+        
+        
+        row.addEventListener('click', function() {
+            var roundId = this.cells[0].innerText;
+            window.location.href = `graph.html?roundId=${roundId}`;
+        });
+        
+        table.appendChild(row);
     }
 }
+
 
 
 searchButton.onclick= async function(){
