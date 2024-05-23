@@ -14,8 +14,8 @@ public interface RoundService {
     boolean saveRoundWithPressures(RoundDTO roundDTO, List<Integer> pressures); // Add this method
     List<Integer> getPressuresForRound(Long roundId);
     List<LeaderboardDTO> getLeaderboardTop100();
-    /*List<RoundDTO> findAllRounds();
-    void deleteRoundById(Long roundId);
+    List<RoundDTO> getRoundsByUsername(String username);
+    /*void deleteRoundById(Long roundId);
     */
 
 

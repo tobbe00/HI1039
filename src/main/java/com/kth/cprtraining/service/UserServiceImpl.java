@@ -36,6 +36,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public String findUserByEmail(String email) {
+        String username = userRepository.findUserByEmail(email).getUsername();
+        return username;
+    }
+
+    @Override
     public boolean checkPassword(UserDTO userDTO) {
 
         User user=userRepository.findUserByEmail(userDTO.getEmail());

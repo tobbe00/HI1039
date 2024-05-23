@@ -82,10 +82,25 @@ public class RoundServiceImpl implements RoundService {
             dto.setUsername(round.getUsername());
             dto.setPoints(round.getPoints());
             dto.setRank(i++);
-            dto.setRoundId(round.getRoundId());
+            dto.setRoundId(round.getRoundId()); 
             leaderboardDTOs.add(dto);
         }
         return leaderboardDTOs;
+    }
+
+    @Override
+    public List<RoundDTO> getRoundsByUsername(String username) {
+        List<Round> rounds = roundRepository.findByUsernameOrderByPointsDesc(username);
+        List<RoundDTO> roundDTOs = new ArrayList<>();
+        for (Round round : rounds) {
+            RoundDTO dto = new RoundDTO();
+            dto.setUsername(round.getUsername());
+            dto.setPoints(round.getPoints());
+
+            dto.setRoundId(round.getRoundId());
+            roundDTOs.add(dto);
+        }
+        return roundDTOs;
     }
 
     @Override
@@ -104,13 +119,12 @@ public class RoundServiceImpl implements RoundService {
         }
         return false;
     }
+
+    
 }
 
 
 
-    /*@Override
-    public List<RoundDTO> findAllRounds() {
-        return (List<RoundDTO>) roundRepository.findAll();
-    }*/
+    
 
 

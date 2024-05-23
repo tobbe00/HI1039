@@ -1,5 +1,7 @@
 package com.kth.cprtraining.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -15,6 +17,7 @@ public class Round {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
     // Getters and Setters

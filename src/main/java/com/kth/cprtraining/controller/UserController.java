@@ -62,6 +62,15 @@ public class UserController {
         return response;
     }
 
+    @GetMapping("/username")
+    public Map<String, String> getUsername(String email){
+        // return userService.getUserById(id); detta e med geduserbyid efter kommer nr2 med optional
+
+        Map<String, String> response = new HashMap<>();
+        response.put("username", userService.findUserByEmail(email));
+        return response;
+    }
+
 
 
 

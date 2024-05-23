@@ -137,7 +137,7 @@ public class GameController {
 
     public Integer handleBatch2(Integer pressure){
         scaling = 200 / avgPressure;
-        pressure = Math.abs((zeroPoint - pressure)) * scaling;
+        pressure = Math.abs((pressure - zeroPoint)) * scaling;
         System.out.println(pressure);
         if(pressure<20) pressure = 0;
         return pressure;

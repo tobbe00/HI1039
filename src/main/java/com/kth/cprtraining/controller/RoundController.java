@@ -5,6 +5,7 @@ import com.kth.cprtraining.dto.RoundDTO;
 import com.kth.cprtraining.dto.RoundFromWebDTO;
 import com.kth.cprtraining.service.RoundService;
 import com.kth.cprtraining.repository.UserRepository;
+import com.kth.cprtraining.model.Round;
 import com.kth.cprtraining.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,9 +53,15 @@ public class RoundController {
         return new ResponseEntity<>(pressures, HttpStatus.OK);
     }
     
-    @GetMapping
+    @GetMapping("/leaderboard")
     public List<LeaderboardDTO> getLeaderboardTop100() {
         return roundService.getLeaderboardTop100();
+    }
+
+     @GetMapping("/getUsersRounds")
+    public List<RoundDTO> getRoundsByUsername(@RequestParam String username) {
+        List<RoundDTO> rounds = roundService.getRoundsByUsername(username);
+        return rounds;
     }
 
     @GetMapping("/getRoundById")
