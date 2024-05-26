@@ -42,6 +42,7 @@ function signOut(){
     // Remove email and isLoggedIn from sessionStorage
     sessionStorage.removeItem("email");
     sessionStorage.removeItem("isLoggedIn");
+    sessionStorage.removeItem("username");
 
 }
 function popUpHome(){
