@@ -10,7 +10,7 @@ var toastDisplayDuration = 100; // Duration in milliseconds
 var toastTimestamp = 0;
 var currentBackgroundIndex = 0;
 var myGamePiece, myBackGround, myButton;
-var testNumbers = [0,0,200,0,0], myTrail = [], greenZoneUpper = [], greenZoneLower = [];
+var testNumbers = [], myTrail = [], greenZoneUpper = [], greenZoneLower = [];
 var currentNum = 0, currentGreenZone = 0, currentGreenZoneLower = 0;
 var gameStarted = false, gameEnded = false, needsReset = true;
 var navbarHeight = document.getElementById('navbarTot').offsetHeight;
@@ -163,25 +163,19 @@ function updateGameArea() {
         myGameArea.frameNo += 1;
         drawLine(zeroPoint);
         
-        if (currentNum >= 0 && currentNum < testNumbers.length) {
-            let targetY = (zeroPoint - testNumbers[currentNum]);
-           if (myGamePiece.y > targetY) {
-                myGamePiece.speedY = -10;
-                if (myGamePiece.speedY > 0) {
-                    currentNum += 1;
+        if (currentNum < testNumbers.length) {
+            let targetY = zeroPoint - testNumbers[currentNum];  // Calculate the target Y position from testNumbers
+            console.log(targetY);
+            if (myGamePiece.y < targetY) {
+                myGamePiece.speedY = 10;  // Move down if the current Y is less than the target Y
+            } else if (myGamePiece.y > targetY) {
+                myGamePiece.speedY = -10; // Move up if the current Y is greater than the target Y
+            } else {
+                myGamePiece.speedY = 0;  // Stop moving if the target Y is reached
+                currentNum++;  // Move to the next number in the array
+                if (currentNum >= testNumbers.length) {
+                    currentNum = 0;  // Reset to start if all positions have been reached
                 }
-            } else if (myGamePiece.y < targetY) {
-                myGamePiece.speedY = 10; 
-                if (myGamePiece.speedY < 0) {
-                    currentNum += 1;
-                }
-            } else if(myGamePiece.y == targetY){
-                myGamePiece.speedY = 0;
-            }
-            
-            
-            if (currentNum >= testNumbers.length) {
-                currentNum = 0;
             }
 
             //myGamePiece.y=targetY;
@@ -227,21 +221,6 @@ function updateGameArea() {
             trail.newPos();
             trail.update();
         });
-
-
-        if (currentGreenZone >= 0 && currentGreenZone < greenZoneUpper.length) {
-            let upperZone = greenZoneUpper[currentGreenZone];
-             if (myGamePiece.y > upperZone.y && myGamePiece.y < upperZone.y + upperZone.height) {
-                showToast("Upper Zone");
-            }
-        }
-
-        if (currentGreenZoneLower >= 0 && currentGreenZoneLower < greenZoneLower.length) {
-            let lowerZone = greenZoneLower[currentGreenZoneLower];
-            if (myGamePiece.y > lowerZone.y && myGamePiece.y < lowerZone.y + lowerZone.height) {     
-                showToast("Lower Zone");
-            }
-        }
        
 
 
