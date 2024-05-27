@@ -1,88 +1,84 @@
-const menu=document.querySelector('#mobile-menu');
-const menuLinks=document.querySelector('.navbar__menu');
+document.addEventListener('DOMContentLoaded', function () {
+    const menu = document.querySelector('#mobile-menu');
+    const menuLinks = document.querySelector('.navbar__menu');
+    const modeSelect = document.getElementById('mode');
+    const zeroPointInput = document.getElementById('zero-point');
+    const avgPointInput = document.getElementById('avg-point');
+    const enterButton = document.getElementById('btnStart-game');
+    const navbarBtn = document.querySelector('.navbar__btn');
 
-menu.addEventListener('click',function(){
-    menu.classList.toggle('is-active');
-    menuLinks.classList.toggle('active');
-});
+    menu.addEventListener('click', function () {
+        menu.classList.toggle('is-active');
+        menuLinks.classList.toggle('active');
+    });
 
-let signedIn=document.getElementById("signupBtn2");
-let navbarBtn = document.querySelector('.navbar__btn');
-if(sessionStorage.getItem("isLoggedIn")=="true"){
-    console.log(sessionStorage.getItem("isLoggedIn"))
-    //signedIn.innerHTML="signed in";
-    navbarBtn.innerHTML = "<a href='/signOut.html' class='button'>sign out</a>"
-}
-//page specific-----------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-// Add event listener to the button
-let enterButton = document.getElementById('btnStart-game');
-enterButton.onclick=function(){
-// Get the zero point value
-let zeroPoint = document.getElementById('zero-point').value;
-//get the avg value
-let avgValue=document.getElementById("avg-point").value;
-
-// Get the difficulty level
-let difficultySelect = document.getElementById('mode');
-let difficulty = difficultySelect.options[difficultySelect.selectedIndex].value;
-
-// Example usage
-console.log('Zero Point:', zeroPoint);
-console.log('Mode:', difficulty);
-console.log("avg:",avgValue);
-if(!sessionStorage.getItem("isLoggedIn")){
-    const confirmed = window.confirm('You need to log in first. Press OK to go to the login page.');
-
-    // If the user confirms, redirect to the login page
-    if (confirmed) {
-        window.location.href = '/login.html'; // Replace '/login' with your login page URL
-    }
-   
-}
-    
-
-// Add your logic here based on the retrieved values
-let data = {
-    zero: zeroPoint,
-    mode: difficulty,
-    avg: avgValue
-};
-
-// Make a POST request to your backend
-fetch('http://localhost:8080/game/zeropoint', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-})
-.then(response => {
-    // Handle the response
-    console.log('Response:', response);
-    sessionStorage.setItem("zeroPoint",zeroPoint);
-    sessionStorage.setItem("avg",avgValue);
-    sessionStorage.setItem("mode",difficulty);
-   
-    if(response.ok){
-        // Navigate to a new page
-        window.location.href = "/game.html";
-
-    }else{
-        const confirmed = window.confirm('Something went wrong! try again, maybe the server is not working?');
+    if (sessionStorage.getItem("isLoggedIn") === "true") {
+        console.log(sessionStorage.getItem("isLoggedIn"));
+        navbarBtn.innerHTML = "<a href='/signOut.html' class='button'>sign out</a>";
     }
 
+    function updateValues() {
+        let zeroPoint, avgPoint;
+        switch (modeSelect.value) {
+            case 'normal':
+                zeroPoint = 500;
+                avgPoint = 200;
+                break;
+            case 'child':
+                zeroPoint = 500; 
+                avgPoint = 150;  
+                break;
+            case 'elderly':
+                zeroPoint = 500; 
+                avgPoint = 125; 
+                break;
+            default:
+                zeroPoint = 500;
+                avgPoint = 200;
+                break;
+        }
+        zeroPointInput.value = zeroPoint;
+        avgPointInput.value = avgPoint;
+    }
 
-})
-.catch(error => {
-    // Handle errors
-    console.error('Error:', error);
+    modeSelect.addEventListener('change', updateValues);
+    updateValues(); 
+
+    enterButton.onclick = function () {
+        if (!sessionStorage.getItem("isLoggedIn")) {
+            const confirmed = window.confirm('You need to log in first. Press OK to go to the login page.');
+            if (confirmed) {
+                window.location.href = '/login.html';
+                return;  // Förhindra ytterligare exekvering
+            }
+        }
+
+        let data = {
+            zero: zeroPointInput.value,
+            mode: modeSelect.value,
+            avg: avgPointInput.value
+        };
+
+        fetch('http://localhost:8080/game/zeropoint', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            console.log('Response:', response);
+            if (response.ok) {
+                sessionStorage.setItem("zeroPoint", data.zero);
+                sessionStorage.setItem("avg", data.avg);
+                sessionStorage.setItem("mode", data.mode);
+                window.location.href = "/game.html";
+            } else {
+                window.confirm('Something went wrong! Try again, maybe the server is not working?');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    };
 });
-
-};
-
