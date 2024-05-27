@@ -33,9 +33,10 @@ public class RoundController {
 
         // Retrieve theGameList somehow (e.g., from a session or other storage)
         List<Integer> theGameList = GameController.theGameList;
+        List<Double> frequencies = GameController.frequencies;
 
         // Call the service method with the converted DTO
-        boolean status = roundService.saveRoundWithPressures(roundDTO, theGameList);
+        boolean status = roundService.saveRoundWithPressuresAndFrequencies(roundDTO, theGameList, frequencies);
         return new ResponseEntity<>(status, HttpStatus.CREATED);
     }
 
@@ -52,7 +53,13 @@ public class RoundController {
         List<Integer> pressures = roundService.getPressuresForRound(roundsId);
         return new ResponseEntity<>(pressures, HttpStatus.OK);
     }
-    
+
+    @GetMapping("/frequencies/{roundsId}")
+    public ResponseEntity<List<Double>> getFrequenciesForRound(@PathVariable("roundsId") Long roundsId) {
+        List<Double> frequencies = roundService.getFrequenciesForRound(roundsId);
+        return new ResponseEntity<>(frequencies, HttpStatus.OK);
+    }
+
     @GetMapping("/leaderboard")
     public List<LeaderboardDTO> getLeaderboardTop100() {
         return roundService.getLeaderboardTop100();

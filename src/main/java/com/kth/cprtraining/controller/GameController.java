@@ -26,6 +26,7 @@ public class GameController {
 
 
     public static List<Integer> theGameList =new ArrayList<>();
+    public static List<Double> frequencies =new ArrayList<>();
 
     List<Integer> pointsList=new ArrayList<>();
     ExtremePointDTO mostRecentExtremePoints=new ExtremePointDTO();
@@ -73,6 +74,7 @@ public class GameController {
         }
 
         System.out.println("Frequency :"+ getFrequency());
+        frequencies.add(getFrequency());
         theGameList.add(pressure);
         mostRecentExtremePoints.setId(pressureId);
         mostRecentExtremePoints.setPressure(pressure);

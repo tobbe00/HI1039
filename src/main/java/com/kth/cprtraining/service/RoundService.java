@@ -11,10 +11,12 @@ public interface RoundService {
     boolean saveRound(Round round);
     RoundDTO findRoundById(Long roundId);
     boolean saveRoundFromWeb(RoundFromWebDTO roundFromWebDTO);
-    boolean saveRoundWithPressures(RoundDTO roundDTO, List<Integer> pressures); // Add this method
+    boolean saveRoundWithPressuresAndFrequencies(RoundDTO roundDTO, List<Integer> pressures, List<Double> frequencies); // Add this method
     List<Integer> getPressuresForRound(Long roundId);
     List<LeaderboardDTO> getLeaderboardTop100();
     List<RoundDTO> getRoundsByUsername(String username);
+
+    List<Double> getFrequenciesForRound(Long roundId);
     /*void deleteRoundById(Long roundId);
     */
 
