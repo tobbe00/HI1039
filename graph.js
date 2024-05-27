@@ -20,20 +20,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (roundId) {
         fetchPressureData(roundId);
+        fetchFrequencyData(roundId);
     } else {
         console.log('Round ID not found in url');
     }
 
-    /*const loadGraphButton = document.getElementById('loadGraph-button');
-    loadGraphButton.addEventListener('click', function() {
-        fetch('http://localhost:8080/rounds/pressures')
-            .then(response => response.json())
-            .then(pressureData => {
-                console.log("Pressure Data:", pressureData); // Debugging: Log fetched data
-                renderChart(pressureData);
-            })
-            .catch(error => console.error('Error fetching the pressure data:', error));
-    });*/
+
 });
 
 function fetchPressureData(roundId) {
@@ -43,8 +35,18 @@ function fetchPressureData(roundId) {
         .then(pressureData => {
             console.log(`Pressure Data for Round ${roundId}:`, pressureData);
             renderChart(pressureData);
+            displayAveragePressure(pressureData);
         })
         .catch(error => console.error(`Error fetching pressure data for Round ${roundId}:`, error));
+}
+function fetchFrequencyData(roundId) {
+    fetch(`http://localhost:8080/rounds/frequencies/${roundId}`)
+        .then(response => response.json())
+        .then(frequencyData => {
+            console.log(`Frequency Data for Round ${roundId}:`, frequencyData);
+            displayAverageFrequency(frequencyData);
+        })
+        .catch(error => console.error(`Error fetching frequency data for Round ${roundId}:`, error));
 }
 
 // Render the chart with fetched data
@@ -53,7 +55,6 @@ function renderChart(pressureData) {
     let totalDataPoints = pressureData.length;
     let labels = Array.from({ length: totalDataPoints }, (_, i) => (i + 1) / 10); // Assuming each point represents 0.1 seconds
 
-    console.log("X-axis Labels:", labels); // Debugging: Log generated labels
 
     var options = {
         series: [{
@@ -102,4 +103,24 @@ function renderChart(pressureData) {
 
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
+}
+
+function displayAveragePressure(pressureData) {
+    if (pressureData.length > 0) {
+        const totalPressure = pressureData.reduce((acc, val) => acc + val, 0);
+        const averagePressure = Math.round(totalPressure / pressureData.length); // Round to the nearest whole number
+        document.getElementById('average-pressure').innerText = `Average Pressure: ${averagePressure}`;
+    } else {
+        document.getElementById('average-pressure').innerText = 'Average Pressure: N/A';
+    }
+}
+
+function displayAverageFrequency(frequencyData) {
+    if(frequencyData.length > 0) {
+        const totalFrequency = frequencyData.reduce((acc, val) => acc + val, 0);
+        const averageFrequency = Math.round(totalFrequency / frequencyData.length);
+        document.getElementById('average-frequency').innerText = `Average Frequency: ${averageFrequency}`;
+    } else {
+        document.getElementById('average-frequency').innerText = 'Average Frequency: N/A';
+    }
 }
