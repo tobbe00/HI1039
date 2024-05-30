@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 
+/**
+* Round entity representing a round of CPR training.
+* This entity includes details such as points scored, username, and the associated user.
+*/
 @Entity
 public class Round {
 
@@ -15,10 +19,6 @@ public class Round {
 
     private String username;
 
-    /**
-     * Round entity representing a round of CPR training.
-     * This entity includes details such as points scored, username, and the associated user.
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_user_id", nullable = false)
     @JsonIgnore
