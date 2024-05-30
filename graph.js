@@ -79,10 +79,6 @@ function renderChart(pressureData) {
         stroke: {
             curve: 'straight'
         },
-        title: {
-            text: 'Pressure Trends by Time (Seconds)',
-            align: 'left'
-        },
         grid: {
             row: {
                 colors: ['#f3f3f3', 'transparent'],
@@ -119,8 +115,8 @@ function displayAverageFrequency(frequencyData) {
     if(frequencyData.length > 0) {
         const totalFrequency = frequencyData.reduce((acc, val) => acc + val, 0);
         const averageFrequency = Math.round(totalFrequency / frequencyData.length);
-        document.getElementById('average-frequency').innerText = `Average Frequency: ${averageFrequency}`;
+        document.getElementById('average-frequency').innerText = `Average BPM: ${averageFrequency}`;
     } else {
-        document.getElementById('average-frequency').innerText = 'Average Frequency: N/A';
+        document.getElementById('average-frequency').innerText = 'Average BPM: N/A';
     }
 }
