@@ -194,15 +194,6 @@ if(sessionStorage.getItem("isLoggedIn")=="true"){
 }
 
 
-
-
-//här övar jag på hashning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//const testpassword="Password1";
-//const salt = CryptoJS.lib.WordArray.random(16); // Generate a random 128-bit salt
-//const saltedPassword = password + salt.toString(CryptoJS.enc.Base64); // Append the salt to the password
-//const hash = CryptoJS.SHA256(saltedPassword).toString(); // Hash the salted password
-    
-//console.log({testpassword,hash})
 function getSalt(){
     const salt2= CryptoJS.lib.WordArray.random(16); // Generate a random 128-bit salt
     return salt2.toString(CryptoJS.enc.Base64);
