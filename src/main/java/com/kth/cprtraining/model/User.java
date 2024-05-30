@@ -11,6 +11,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
+/**
+ * User entity representing a user in the CPR training application.
+ * This entity includes details such as username, email, password, and associated rounds.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

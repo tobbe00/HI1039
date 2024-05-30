@@ -19,7 +19,6 @@ public class PressureData {
     @Column(name = "pressures", columnDefinition = "TEXT")
     private String pressures;
 
-    // Constructors, getters, setters
 
     public void setPressuresFromList(List<Integer> pressures) {
         this.pressures = pressures.stream()
@@ -33,7 +32,7 @@ public class PressureData {
                 .collect(Collectors.toList());
     }
 
-    // Getters and Setters
+
     public Long getId() {
         return id;
     }

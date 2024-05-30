@@ -5,11 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data Transfer Object (DTO) for zero point information.
+ * Includes details such as the zero point value, mode, and average.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class ZeroPoint {
+public class ZeroPointDTO {
     int zero;
     String mode;
     int avg;

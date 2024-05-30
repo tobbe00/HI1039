@@ -5,12 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data Transfer Object (DTO) for Point information.
+ * Includes details such as maximum points, minimum points, ID, and frequency.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 public class PointDTO {
-    //private double frequency;
     private int pointsMax;
     private int pointsMin;
     private int id;

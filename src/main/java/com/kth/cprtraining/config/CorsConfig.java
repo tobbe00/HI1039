@@ -5,12 +5,25 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * CorsConfig defines global CORS configuration for a Spring Boot application.
+ * This configuration allows specific cross-origin requests to be accepted.
+ */
 @Configuration
 public class CorsConfig {
 
+    /**
+     * Provides a WebMvcConfigurer bean with CORS mappings configured.
+     * This bean configures global CORS settings for the entire application.
+     */
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
+
+            /**
+             * Configures CORS mappings for the application.
+             * This method allows specific methods and headers from defined origins.
+             */
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")

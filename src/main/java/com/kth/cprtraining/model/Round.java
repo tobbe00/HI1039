@@ -13,14 +13,16 @@ public class Round {
 
     private int points;
 
-    private String username;  // Ensure this field is present
+    private String username;
 
+    /**
+     * Round entity representing a round of CPR training.
+     * This entity includes details such as points scored, username, and the associated user.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_user_id", nullable = false)
     @JsonIgnore
     private User user;
-
-    // Getters and Setters
 
     public Long getRoundId() {
         return roundId;

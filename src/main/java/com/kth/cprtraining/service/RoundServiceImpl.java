@@ -19,8 +19,11 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+/**
+ * RoundServiceImpl provides service-layer methods for managing CPR training rounds.
+ * It interacts with repositories to perform CRUD operations on rounds, pressures, and frequencies.
+ */
 @Service
 public class RoundServiceImpl implements RoundService {
 
@@ -30,6 +33,14 @@ public class RoundServiceImpl implements RoundService {
     private final Mapper<Round, RoundDTO> mapper;
     private final UserRepository userRepository;
 
+    /**
+     * Constructs the RoundServiceImpl with required repositories and a mapper.
+     * @param roundRepository Repository for accessing round data.
+     * @param mapper Mapper to convert between Round and RoundDTO objects.
+     * @param userRepository Repository for accessing user data.
+     * @param pressureDataRepository Repository for accessing pressure data.
+     * @param frequencyDataRepository Repository for accessing frequency data.
+     */
     @Autowired
     public RoundServiceImpl(RoundRepository roundRepository, Mapper<Round, RoundDTO> mapper, UserRepository userRepository, PressureDataRepository pressureDataRepository, FrequencyDataRepository frequencyDataRepository) {
         this.roundRepository = roundRepository;
@@ -39,18 +50,22 @@ public class RoundServiceImpl implements RoundService {
         this.frequencyDataRepository = frequencyDataRepository;
     }
 
-    @Override
-    public boolean saveRound(Round round) {
-        Round round2 = roundRepository.save(round);
-        return round2 != null;
-    }
-
+    /**
+     * Retrieves a round by its ID and converts it to a DTO.
+     * @param roundId The ID of the round to retrieve.
+     * @return A RoundDTO or null if the round is not found.
+     */
     @Override
     public RoundDTO findRoundById(Long roundId) {
         Optional<Round> opt = roundRepository.findById(roundId);
         return opt.map(mapper::mapToDTO).orElse(null);
     }
 
+    /**
+     * Retrieves all pressures associated with a round.
+     * @param roundId The ID of the round.
+     * @return A list of pressures.
+     */
     @Override
     public List<Integer> getPressuresForRound(Long roundId) {
         Optional<Round> roundOpt = roundRepository.findById(roundId);
@@ -65,6 +80,11 @@ public class RoundServiceImpl implements RoundService {
         return new ArrayList<>();
     }
 
+    /**
+     * Retrieves all frequencies associated with a round.
+     * @param roundId The ID of the round.
+     * @return A list of frequencies.
+     */
     @Override
     public List<Double> getFrequenciesForRound(Long roundId) {
         Optional<Round> roundOpt = roundRepository.findById(roundId);
@@ -78,18 +98,11 @@ public class RoundServiceImpl implements RoundService {
         return new ArrayList<>();
     }
 
-    @Override
-    public boolean saveRoundFromWeb(RoundFromWebDTO roundFromWebDTO) {
-        User user = userRepository.findUserByEmail(roundFromWebDTO.getEmail());
-        Round roundToSave = new Round();
-        roundToSave.setUser(user);
-        roundToSave.setUsername(user.getUsername());
-        roundToSave.setPoints(roundFromWebDTO.getPoints());
 
-        Round round2 = roundRepository.save(roundToSave);
-        return round2 != null;
-    }
-
+    /**
+     * Retrieves the top 100 rounds ordered by points and maps them to DTOs for leaderboard display.
+     * @return A list of LeaderboardDTOs representing the top 100 rounds.
+     */
     @Override
     public List<LeaderboardDTO> getLeaderboardTop100() {
         List<Round> top100Rounds = roundRepository.findTop100ByOrderByPointsDesc();
@@ -106,6 +119,11 @@ public class RoundServiceImpl implements RoundService {
         return leaderboardDTOs;
     }
 
+    /**
+     * Retrieves all rounds for a specific user by username and maps them to DTOs.
+     * @param username The username to look up rounds for.
+     * @return A list of RoundDTOs representing the rounds of the specified user.
+     */
     @Override
     public List<RoundDTO> getRoundsByUsername(String username) {
         List<Round> rounds = roundRepository.findByUsernameOrderByPointsDesc(username);
@@ -121,6 +139,13 @@ public class RoundServiceImpl implements RoundService {
         return roundDTOs;
     }
 
+    /**
+     * Saves a round along with associated pressures and frequencies.
+     * @param roundDTO DTO containing round data.
+     * @param pressures List of pressure values.
+     * @param frequencies List of frequency values.
+     * @return true if the round and its data were saved successfully, otherwise false.
+     */
     @Override
     public boolean saveRoundWithPressuresAndFrequencies(RoundDTO roundDTO, List<Integer> pressures, List<Double> frequencies) {
         Round round = mapper.mapToEntity(roundDTO);
@@ -142,13 +167,4 @@ public class RoundServiceImpl implements RoundService {
         }
         return false;
     }
-
-
-    
 }
-
-
-
-    
-
-

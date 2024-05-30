@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * PressureData entity representing pressure data recorded during a CPR training round.
+ * This entity includes details such as the associated round and the pressure data points.
+ */
 @Entity
 @Table(name = "frequencydata")
 public class FrequencyData {
@@ -18,8 +22,6 @@ public class FrequencyData {
 
     @Column(name = "frequencies", columnDefinition = "TEXT")
     private String frequencies;
-
-    // Constructors, getters, setters
 
     public void setFrequenciesFromList(List<Double> frequencies) {
         this.frequencies = frequencies.stream()

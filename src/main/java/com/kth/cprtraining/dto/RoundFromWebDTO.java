@@ -5,6 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data Transfer Object (DTO) for Round information received from the web.
+ * Includes details such as round ID, points, and email of the user.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -14,6 +18,5 @@ public class RoundFromWebDTO {
 
     private int points;
 
-    //private Long userId;
     private String email;
 }

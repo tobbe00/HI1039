@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Batch class representing a batch of data with an ID.
+ * This class includes an array to store batch data and provides methods to set and get data at specific indices.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
