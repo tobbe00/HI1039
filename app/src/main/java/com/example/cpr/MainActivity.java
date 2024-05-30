@@ -15,34 +15,37 @@ import android.widget.Button;
 import android.widget.TextView;
 
 //import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.cpr.Model.Batch;
 import com.example.cpr.retrofit.RetrofitService;
 import com.example.cpr.retrofit.SendApi;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
+/**
+ * MainActivity handles the interaction with a Bluetooth device, including starting and managing game rounds.
+ */
 public class MainActivity extends BaseActivity {
 
-
     private Button startButton;
-
     private Button restartButton;
     private TextView finishedText;
     private TextView prepareText;
     private TextView countdownText;
     private SendApi sendApi;
+
+    private CountDownTimer preparationCountDownTimer;
+    private CountDownTimer mainCountDownTimer;
+
+    // Bluetooth GATT object for Bluetooth operations
+    private BluetoothGatt mBluetoothGatt = null;
+
+    // Callback for handling Bluetooth GATT events
     private final BluetoothGattCallback mBtGattCallback = new BluetoothGattCallback() {
 
         @Override
@@ -97,7 +100,7 @@ public class MainActivity extends BaseActivity {
                 Log.d("test1", "Failed to write descriptor");
             }
         }
-        //int batch[] = new int[5];
+
 
         /**
          * Callback called on characteristic changes, e.g. when a sensor data value is changed.
@@ -150,13 +153,13 @@ public class MainActivity extends BaseActivity {
 
             }
         }
-
     };
-    private CountDownTimer preparationCountDownTimer;
-    private CountDownTimer mainCountDownTimer;
-    private BluetoothGatt mBluetoothGatt = null;
-    private List<Integer> batch;
 
+
+    /**
+     * Called when the activity is starting. Initializes the activity.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle). Otherwise it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,7 +172,6 @@ public class MainActivity extends BaseActivity {
         restartButton = findViewById(R.id.restartButton);
         restartButton.setEnabled(false);
         restartButton.setVisibility(View.GONE);
-        batch = new ArrayList<>();
 
         RetrofitService retrofitService = new RetrofitService(LoginActivity.getUrl());
 
@@ -191,6 +193,9 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Starts a new game round by establishing a Bluetooth connection and initiating a countdown.
+     */
     private void startRound() {
         if (mBluetoothGatt == null) {
             BluetoothDevice device = getIntent().getExtras().getParcelable("btdevice");
@@ -221,7 +226,7 @@ public class MainActivity extends BaseActivity {
                 sendApi.sendGameStart(true).enqueue(new Callback<Boolean>() {
                     @Override
                     public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                        Log.d("test1", " response from server");
+                        Log.d("test1", "Response from server");
                     }
 
                     @Override
@@ -234,6 +239,9 @@ public class MainActivity extends BaseActivity {
         }.start();
     }
 
+    /**
+     * Starts the main countdown timer for the game round.
+     */
     private void startMainCountdown() {
         mBluetoothGatt.discoverServices();
         prepareText.setVisibility(View.GONE);
@@ -260,6 +268,9 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    /**
+     * Restarts the game round by resetting timers and UI components.
+     */
     private void restartRound() {
         if (mBluetoothGatt != null) {
             mBluetoothGatt.close();
@@ -281,16 +292,16 @@ public class MainActivity extends BaseActivity {
         startButton.setEnabled(true);
     }
 
+    /**
+     * Handles the end of the game round, resetting UI components and potentially sending end game data to the server.
+     */
     private void gameEnd() {
         sendApi.sendGameEnd(true).enqueue((new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-
             }
-
             @Override
             public void onFailure(Call<Boolean> call, Throwable t) {
-
             }
         }));
     }

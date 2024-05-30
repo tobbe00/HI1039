@@ -36,21 +36,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-
+/**
+ * BluetoothActivity manages Bluetooth operations including scanning, connecting to devices,
+ * and handling Bluetooth Low Energy (BLE) communication.
+ */
 public class BluetoothActivity extends BaseActivity {
-
-
     BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-    boolean isConnected = false;
     private BluetoothGatt mBluetoothGatt = null;
 
     private TextView dataText;
     private Handler mHandler;
-
-
     private boolean mScanning;
-
     private ArrayList<BluetoothDevice> mDeviceList;
     private DeviceListAdapter deviceListAdapter;
     private ListView deviceListView;
@@ -58,29 +54,19 @@ public class BluetoothActivity extends BaseActivity {
     public static final int REQUEST_ENABLE_BT = 1000;
     public static final int REQUEST_ACCESS_LOCATION = 1001;
 
+    /**
+     * Initializes Bluetooth setup and UI components.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle). Otherwise it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth);
-
         mHandler = new Handler();
-
         mDeviceList = new ArrayList<>();
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        this.registerReceiver(broadcastReceiver, filter);
-
-       // Button checkConnectionButton = findViewById(R.id.checkConnectionButton);
-
         Button scanButton = findViewById(R.id.scanButton);
-
         deviceListView = findViewById(R.id.device_list);
-
         dataText = findViewById(R.id.dataText);
-
         deviceListAdapter = new DeviceListAdapter(this, mDeviceList);
         deviceListView.setAdapter(deviceListAdapter);
 
@@ -107,69 +93,22 @@ public class BluetoothActivity extends BaseActivity {
                     intent.putExtra("btdevice", device);
                     startActivity(intent);
                 }
-
             }
         });
-
-
-
-
-        /*checkConnectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-
-                Log.d("Test1", "Clicked on butotn");
-                for (BluetoothDevice device : pairedDevices) {
-                    Log.d("Test1", "Found bonded devices");
-
-
-                    mBluetoothGatt = device.connectGatt(BluetoothActivity.this, false, mBtGattCallback);
-
-                    if(mBluetoothGatt!=null && mBluetoothGatt.connect()){
-                        Intent intent = new Intent (BluetoothActivity.this, MainActivity.class);
-                        intent.putExtra("btdevice", device);
-                        startActivity(intent);
-                    }
-
-                    if (mBluetoothGatt.connect()) {
-                        Log.d("test1", "success");
-                    } else {
-                        Log.d("test1", "fail");
-                    }
-                }
-            }
-        });*/
     }
 
+    /**
+     * Called when the activity becomes visible.
+     * Initializes Bluetooth Low Energy (BLE) capabilities.
+     */
     @Override
     protected void onStart() {
         super.onStart();
         initBLE();
     }
 
-    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        BluetoothDevice device;
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
-                isConnected = true;
-                Toast.makeText(getApplicationContext(), "Device is now Connected123", Toast.LENGTH_SHORT).show();
-            } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
-                isConnected = false;
-                Toast.makeText(getApplicationContext(), "Device is disconnected123", Toast.LENGTH_SHORT).show();
-            }
-
-
-        }
-    };
-
+    // GATT callback to manage Bluetooth connection changes
     private final BluetoothGattCallback mBtGattCallback = new BluetoothGattCallback() {
-
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
@@ -182,11 +121,10 @@ public class BluetoothActivity extends BaseActivity {
                         TextView textViewError = findViewById(R.id.connectionText);
                         textViewError.setText("Connected");
                         textViewError.setVisibility(View.VISIBLE); // Make sure the TextView is visible
-                        Log.d("test1", "changed1");
+                        Log.d("test1", "Connected");
                     }
                 });
-                // Discover services
-               // gatt.discoverServices();
+
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 // Close connection and display info in ui
                 mBluetoothGatt = null;
@@ -195,15 +133,19 @@ public class BluetoothActivity extends BaseActivity {
                         // mDataView.setText(R.string.disconnected);
                         TextView textViewError = findViewById(R.id.connectionText);
                         textViewError.setText("Disconnected");
-                        textViewError.setVisibility(View.VISIBLE); // Make sure the TextView is visible
+                        textViewError.setVisibility(View.VISIBLE);
 
-                        Log.d("test1", "changed2");
+                        Log.d("test1", "Disconnected");
                     }
                 });
             }
         }
     };
 
+    /**
+     * Initiates BLE scanning.
+     * @param enable Enables or disables scanning.
+     */
     private void scanForDevices(final boolean enable) {
         Log.d("test1","clicked");
         final BluetoothLeScanner scanner =
@@ -236,14 +178,12 @@ public class BluetoothActivity extends BaseActivity {
         }
     }
 
-    /*
-     * Implementation of scan callback methods
-     */
+    // Handles scanning results
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
-            //Log.i(LOG_TAG, "onScanResult");
+
             final BluetoothDevice device = result.getDevice();
             final String name = device.getName();
 
@@ -255,18 +195,15 @@ public class BluetoothActivity extends BaseActivity {
                         mDeviceList.add(device);
 
                         deviceListAdapter.notifyDataSetChanged();
-
                     }
                 }
             });
         }
-
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
             super.onBatchScanResults(results);
             Log.i("test1", "onBatchScanResult");
         }
-
         @Override
         public void onScanFailed(int errorCode) {
             super.onScanFailed(errorCode);
@@ -274,6 +211,9 @@ public class BluetoothActivity extends BaseActivity {
         }
     };
 
+    /**
+     * Initializes Bluetooth Low Energy capabilities.
+     */
     private void initBLE() {
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             finish();
@@ -299,7 +239,12 @@ public class BluetoothActivity extends BaseActivity {
         }
     }
 
-    // callback for Activity.requestPermissions
+    /**
+     * Callback for handling the result of permission requests.
+     * @param requestCode The request code passed in requestPermissions(android.app.Activity, String[], int).
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions which is either PackageManager.PERMISSION_GRANTED or PackageManager.PERMISSION_DENIED. Never null.
+     */
     @Override
     public void onRequestPermissionsResult(
             int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -313,5 +258,4 @@ public class BluetoothActivity extends BaseActivity {
             }
         }
     }
-
 }
